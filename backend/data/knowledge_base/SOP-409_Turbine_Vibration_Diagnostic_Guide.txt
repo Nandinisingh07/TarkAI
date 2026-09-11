@@ -1,0 +1,12 @@
+STANDARD OPERATING PROCEDURE: SOP-409
+TITLE: Steam Turbine Shaft Vibration Analysis & Bearing Thermal Limits
+REVISION: 2.0 (Industrial Confidential)
+
+1. VIBRATION FREQUENCY ANALYSIS
+- 1X RPM Dominant Peak: Indicates rotor unbalance. Action: Dynamic single-plane field balancing required if peak exceeds 35 microns peak-to-peak.
+- 0.45X - 0.48X Sub-synchronous Peak: Indicates oil whirl / oil whip instability in sleeve bearings. Action: Check lube oil viscosity and inlet temperature (maintain 45°C - 48°C).
+- 2X RPM Peak: Indicates shaft misalignment or mechanical looseness. Action: Perform laser alignment during next scheduled outage.
+
+2. BEARING TEMPERATURE THRESHOLDS
+- Babbit Bearing Max Operational Temperature: 95°C (Alarm), 105°C (Auto-Trip).
+- Lube Oil Supply Pressure: 1.8 bar to 2.4 bar.

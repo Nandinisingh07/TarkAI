@@ -1,0 +1,20 @@
+STANDARD OPERATING PROCEDURE: SOP-302
+TITLE: Thermal Power Plant Boiler & Boiler Tube Safety Inspection
+REVISION: 4.1 (Air-Gapped Confidential Document)
+
+1. PURPOSE & SCOPE
+This document defines mandatory safety and inspection protocols for superheater tube pressure boundaries, high-pressure steam turbines, and coal pulverizer units at Thermal Plant Alpha.
+
+2. PRE-INSPECTION SAFETY CHECKLIST
+- Ensure main steam isolation valves (MSIV-101 and MSIV-102) are double-blocked and bled.
+- Lockout/Tagout (LOTO) key lockbox #402 must be verified by shift charge engineer.
+- Ambient temperature in boiler drum must be strictly below 40°C before human entry.
+- Oxygen levels inside enclosed pressure vessels must measure between 19.5% and 23.5%.
+
+3. FREQUENCY & PARAMETERS
+- Superheater wall thickness ultrasonics: Every 1,000 operational hours.
+- Feedwater pump pressure threshold: Max allowed differential 185 bar.
+- Vibration baseline on Bearing 3: Warning at 4.5 mm/s RMS; Emergency Shutdown at 7.1 mm/s RMS.
+
+4. EMERGENCY CONTINGENCY
+In case of sudden pressure drop across reheater section (> 15 bar/min), initiate manual trip MT-01 immediately and alert central control room.

@@ -1,0 +1,27 @@
+{
+  "coder_model": "qwen2.5-coder:1.5b",
+  "general_model": "phi3:mini",
+  "vision_model": "moondream2",
+  "ollama_base_url": "http://localhost:11434",
+  "coder_keywords": [
+    "code",
+    "script",
+    "python",
+    "function",
+    "debug",
+    "error",
+    "bug",
+    "algorithm",
+    "refactor",
+    "sql",
+    "html",
+    "javascript",
+    "css",
+    "class",
+    "programming",
+    "syntax",
+    "compile",
+    "traceback",
+    "exception"
+  ]
+}
