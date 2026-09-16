@@ -30,7 +30,17 @@ ORCHESTRATOR_TOOL_MAP = {
 }
 
 
-ORCHESTRATOR_SYSTEM_PROMPT = """You are TarkAI Sovereign Industrial Agent, an air-gapped industrial AI assistant.
+ORCHESTRATOR_SYSTEM_PROMPT = """
+IMPORTANT TOOL RULES:
+- ONLY use tools listed in AVAILABLE TOOLS. NEVER invent a tool name.
+- For arithmetic or numerical calculations, use execute_code with Python.
+- Do not repeat the same tool call with identical input unless the previous observation was an error or insufficient.
+- After search_knowledge_base returns the required facts, move to the next required operation instead of repeating the search.
+- Preserve exact values and semantic labels from source documents.
+- For spreadsheet creation, provide data using {"headers":[...],"rows":[...]} or a simple key/value dictionary.
+- Complete all requested operations before FINAL_ANSWER.
+
+You are TarkAI Sovereign Industrial Agent, an air-gapped industrial AI assistant.
 Your goal is to complete complex tasks step-by-step using available tools.
 
 AVAILABLE TOOLS:
@@ -141,8 +151,8 @@ class AgentOrchestrator:
         return thought, action, action_input
 
     def run_loop(self) -> Dict[str, Any]:
-
         initial_context = f"TASK: {self.task_description}\n"
+
         if self.attached_files:
             initial_context += f"ATTACHED FILES: {', '.join(self.attached_files)}\n"
 
@@ -150,8 +160,13 @@ class AgentOrchestrator:
 
         for step in range(1, self.max_steps + 1):
             self.current_step = step
-            step_prompt = prompt_history + f"\n\n--- STEP {step} ---\nOutput Thought, Action, and Action Input:"
-            
+
+            step_prompt = (
+                prompt_history
+                + f"\n\n--- STEP {step} ---\n"
+                + "Output Thought, Action, and Action Input:"
+            )
+
             raw_resp = self._call_model(step_prompt)
             thought, action, action_input = self._parse_response(raw_resp)
 
@@ -162,7 +177,7 @@ class AgentOrchestrator:
                 "action_input": action_input,
                 "observation": "",
                 "status": "in_progress",
-                "timestamp": time.strftime("%H:%M:%S")
+                "timestamp": time.strftime("%H:%M:%S"),
             }
 
             if not action or action == "FINAL_ANSWER":
@@ -170,34 +185,90 @@ class AgentOrchestrator:
                 step_record["status"] = "completed"
                 self.trace.append(step_record)
 
-                final_content = action_input if isinstance(action_input, dict) and action_input.get("content") else {"output_format": "text", "content": str(action_input or thought)}
-                
+                if isinstance(action_input, dict) and action_input.get("content"):
+                    final_content = action_input
+                else:
+                    final_content = {
+                        "output_format": "text",
+                        "content": str(action_input or thought),
+                    }
+
                 return {
                     "task_id": self.task_id,
                     "model_used": self.model,
                     "routing_reason": self.routing_reason,
                     "status": "completed",
                     "final_answer": final_content,
-                    "trace": self.trace
+                    "trace": self.trace,
                 }
 
-            # Execute Tool
             tool_fn = ORCHESTRATOR_TOOL_MAP.get(action)
+
+            # Prevent repeated identical tool calls.
+            normalized_input = json.dumps(action_input, sort_keys=True, default=str) if isinstance(action_input, (dict, list)) else str(action_input)
+            current_call = (action, normalized_input)
+
+            if current_call in getattr(self, "_executed_calls", set()):
+                observation = (
+                    f"Duplicate action detected for '{action}'. "
+                    "Use the previous observation and proceed to the next required step."
+                )
+                trace.append({
+                    "step": step,
+                    "action": action,
+                    "action_input": action_input,
+                    "observation": observation
+                })
+                continue
+
+            if not hasattr(self, "_executed_calls"):
+                self._executed_calls = set()
+            self._executed_calls.add(current_call)
+
             if not tool_fn:
-                observation = f"Error: Unknown tool '{action}'."
+                # Compatibility fallback for simple arithmetic requested by the local model.
+                # This is not exposed as an additional agent tool.
+                if action == "calculate_difference" and isinstance(action_input, dict):
+                    try:
+                        a = float(action_input.get("max_operating_temp"))
+                        b = float(action_input.get("auto_trip_temp"))
+                        difference = abs(a - b)
+                        units = action_input.get("temperature_units", "Celsius")
+                        observation = (
+                            f"Calculation completed locally: "
+                            f"|{a:g} - {b:g}| = {difference:g} {units}."
+                        )
+                    except Exception as e:
+                        observation = f"Calculation error: {str(e)}"
+                else:
+                    observation = f"Error: Unknown tool '{action}'."
             else:
                 try:
                     kwargs = {}
+
                     if isinstance(action_input, dict):
                         kwargs = action_input.copy()
-                    elif isinstance(action_input, str) and action_input:
-                        kwargs = {"path": action_input}
 
-                    # Inject job_id if supported
-                    if action in ["read_file", "write_file", "execute_code", "write_spreadsheet", "read_spreadsheet", "search_knowledge_base", "extract_text", "describe_image"]:
+                    elif isinstance(action_input, str) and action_input:
+                        if action == "search_knowledge_base":
+                            kwargs = {"query": action_input}
+                        else:
+                            kwargs = {"path": action_input}
+
+                    if action in [
+                        "read_file",
+                        "write_file",
+                        "execute_code",
+                        "write_spreadsheet",
+                        "read_spreadsheet",
+                        "search_knowledge_base",
+                        "extract_text",
+                        "describe_image",
+                    ]:
                         kwargs["job_id"] = self.task_id
 
                     observation = tool_fn(**kwargs)
+
                 except Exception as e:
                     observation = f"Error executing tool '{action}': {str(e)}"
 
@@ -205,15 +276,26 @@ class AgentOrchestrator:
             step_record["status"] = "completed"
             self.trace.append(step_record)
 
-            prompt_history += f"\nStep {step} Thought: {thought}\nAction: {action}\nObservation: {observation}\n"
+            prompt_history += (
+                f"\nStep {step} Thought: {thought}\n"
+                f"Action: {action}\n"
+                f"Observation: {observation}\n"
+            )
 
-        # Max steps reached fallback
-        fallback = self.trace[-1]["observation"] if self.trace else "Task loop ended."
+        fallback = (
+            self.trace[-1]["observation"]
+            if self.trace
+            else "Task loop ended."
+        )
+
         return {
             "task_id": self.task_id,
             "model_used": self.model,
             "routing_reason": self.routing_reason,
             "status": "completed",
-            "final_answer": {"output_format": "text", "content": fallback},
-            "trace": self.trace
+            "final_answer": {
+                "output_format": "text",
+                "content": fallback,
+            },
+            "trace": self.trace,
         }

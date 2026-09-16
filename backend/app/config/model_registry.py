@@ -60,8 +60,8 @@ class ModelRegistry:
 
         # Defaults if no file found
         loaded_vals = {
-            "GENERAL_MODEL": "qwen3:4b-instruct-2507",
-            "CODING_MODEL": "qwen2.5-coder:3b",
+            "GENERAL_MODEL": "phi3:mini",
+            "CODING_MODEL": "qwen2.5-coder:1.5b",
             "VISION_MODEL": "qwen3-vl:4b",
             "OCR_ENGINE": "PaddleOCR",
             "OBJECT_DETECTION_MODEL": "rf-detr",
@@ -86,11 +86,11 @@ class ModelRegistry:
 
     @property
     def GENERAL_MODEL(self) -> str:
-        return self._config.get("GENERAL_MODEL", "qwen3:4b-instruct-2507")
+        return self._config.get("GENERAL_MODEL", "phi3:mini")
 
     @property
     def CODING_MODEL(self) -> str:
-        return self._config.get("CODING_MODEL", "qwen2.5-coder:3b")
+        return self._config.get("CODING_MODEL", "qwen2.5-coder:1.5b")
 
     @property
     def VISION_MODEL(self) -> str:

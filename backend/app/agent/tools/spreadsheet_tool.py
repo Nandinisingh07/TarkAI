@@ -31,15 +31,25 @@ def write_spreadsheet(file_path: str, data: Union[str, dict, list], sheet_name: 
         ws = wb.active
         ws.title = sheet_name
 
-        headers = data.get("headers", ["Header 1", "Header 2"]) if isinstance(data, dict) else ["Data"]
-        rows = data.get("rows", []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+        if isinstance(data, dict):
+            # Preferred format: {"headers": [...], "rows": [[...], ...]}
+            if "headers" in data or "rows" in data:
+                headers = data.get("headers", ["Parameter", "Value"])
+                rows = data.get("rows", [])
+            else:
+                # Also accept a simple key/value dictionary from the local model.
+                headers = ["Parameter", "Value"]
+                rows = [[str(key), str(value)] for key, value in data.items()]
+        elif isinstance(data, list):
+            headers = ["Data"]
+            rows = [[str(row)] if not isinstance(row, list) else row for row in data]
+        else:
+            headers = ["Data"]
+            rows = [[str(data)]]
 
         ws.append(headers)
         for row in rows:
-            if isinstance(row, list):
-                ws.append(row)
-            else:
-                ws.append([str(row)])
+            ws.append(row if isinstance(row, list) else [str(row)])
 
         wb.save(str(p))
 

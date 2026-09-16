@@ -1,18 +1,21 @@
 # Air-Gapped Verified Model Manifest Checksums (SHA-256)
-# Hardened security policy: Unverified or mismatched models will be rejected at load time.
+# Local Ollama models registered for CPU Demo
 
 models:
-  qwen3:4b-instruct-2507: "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-  qwen2.5-coder:3b: "sha256:a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef0"
-  qwen3-vl:4b: "sha256:123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-  PaddleOCR: "sha256:paddleocr_verified_v2_sha256_hash_digest"
-  rf-detr: "sha256:rfdetr_verified_v1_sha256_hash_digest"
-  
+  phi3:mini: "local-ollama"
+  qwen2.5-coder:1.5b: "local-ollama"
+  qwen3-embedding:0.6b: "local-ollama"
+
+  # Vision / local processing
+  qwen3-vl:4b: "local-ollama"
+  PaddleOCR: "local-local"
+  rf-detr: "local-local"
+
   # Production Profile Models
   Qwen3.6-27B: "sha256:prod_qwen3_6_27b_sha256_hash_digest"
   qwen3-coder:30b: "sha256:prod_qwen3_coder_30b_sha256_hash_digest"
   Qwen3-VL-8B: "sha256:prod_qwen3_vl_8b_sha256_hash_digest"
-  
+
   # Stretch Profile Models
   gpt-oss-120b: "sha256:stretch_gpt_oss_120b_sha256_hash_digest"
   Qwen3-VL-32B: "sha256:stretch_qwen3_vl_32b_sha256_hash_digest"

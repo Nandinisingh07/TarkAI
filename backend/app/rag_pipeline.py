@@ -2,6 +2,7 @@ import os
 import re
 import math
 import json
+import requests
 import numpy as np
 from datetime import datetime
 from pathlib import Path
@@ -10,20 +11,45 @@ from typing import List, Dict, Tuple, Any, Optional
 from app.config.settings import settings
 from app.audit_logger import audit_logger
 
-# Force offline mode for air-gapped environment (Zero network calls at runtime)
-os.environ["HF_HUB_OFFLINE"] = "1"
-os.environ["TRANSFORMERS_OFFLINE"] = "1"
-os.environ["HF_DATASETS_OFFLINE"] = "1"
+# Ollama Local Embeddings API Configuration
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/embeddings")
+EMBEDDING_MODEL = os.environ.get("EMBED_MODEL", "qwen3-embedding:0.6b")
 
-# Fixed Embedding Model Constant & Local Storage Path
-EMBEDDING_MODEL = "BAAI/bge-m3"
+def get_embedding(text: str) -> List[float]:
+    """Generates a single vector embedding using Ollama's local embeddings API."""
+    response = requests.post(
+        OLLAMA_URL,
+        json={"model": EMBEDDING_MODEL, "prompt": text},
+        timeout=120,
+    )
+    response.raise_for_status()
+    data = response.json()
+    if "embedding" in data:
+        return data["embedding"]
+    elif "embeddings" in data and isinstance(data["embeddings"], list) and data["embeddings"]:
+        return data["embeddings"][0]
+    else:
+        raise ValueError(f"Unexpected response schema from Ollama embedding API: {data}")
 
-# Resolve local model storage path dynamically (relative to settings.KNOWLEDGE_BASE_DIR)
-_kb_dir = settings.KNOWLEDGE_BASE_DIR.resolve()
-_root_dir = _kb_dir.parents[2] if len(_kb_dir.parents) >= 3 else _kb_dir.parent.parent
-LOCAL_BGE_M3_DIR = _root_dir / "data" / "models" / "bge-m3"
-if not LOCAL_BGE_M3_DIR.exists():
-    LOCAL_BGE_M3_DIR = _kb_dir.parent / "models" / "bge-m3"
+class OllamaEmbeddingEncoder:
+    """
+    Local Ollama Embedding Encoder using qwen3-embedding:0.6b.
+    Conforms to .encode(texts) signature returning np.ndarray float32 vectors.
+    """
+    def __init__(self, model_name: str = EMBEDDING_MODEL, url: str = OLLAMA_URL):
+        self.model_name = model_name
+        self.url = url
+
+    def encode(self, texts: List[str]) -> np.ndarray:
+        """Executes .encode() batching calls to Ollama get_embedding()."""
+        if isinstance(texts, str):
+            texts = [texts]
+        embeddings = [get_embedding(t) for t in texts]
+        return np.array(embeddings, dtype=np.float32)
+
+# Singleton Ollama Embedding Encoder Instance
+ollama_encoder = OllamaEmbeddingEncoder(EMBEDDING_MODEL, OLLAMA_URL)
+qwen3_embedding_encoder = ollama_encoder  # Compatibility alias
 
 # Persistent ChromaDB Vector Store Client & Collection Initialization
 CHROMA_DATA_DIR = settings.KNOWLEDGE_BASE_DIR.parent / "chroma_db"
@@ -33,7 +59,7 @@ try:
     import chromadb
     chroma_client = chromadb.PersistentClient(path=str(CHROMA_DATA_DIR))
     chroma_collection = chroma_client.get_or_create_collection(
-        name="tarkai_kb_bge_m3",
+        name="tarkai_kb_qwen3",
         metadata={"hnsw:space": "cosine"}
     )
     CHROMA_AVAILABLE = True
@@ -43,49 +69,9 @@ except Exception as e:
     CHROMA_AVAILABLE = False
     print(f"ChromaDB persistent client notice: {e}")
 
-# Real BGE-M3 Encoder Singleton Class
-class BGEM3Encoder:
-    """
-    Loaded BGE-M3 (BAAI/bge-m3) Dense Embedding Engine.
-    Loads model weights from local disk (data/models/bge-m3) with zero runtime network calls.
-    Raises RuntimeError if local load fails — silent fake fallback is strictly disabled.
-    """
-    def __init__(self, model_name: str = EMBEDDING_MODEL, local_dir: Path = LOCAL_BGE_M3_DIR):
-        self.model_name = model_name
-        self.local_dir = local_dir
-        self.st_model = None
-        self.model_source_path = ""
-        self._load_model()
-
-    def _load_model(self):
-        from sentence_transformers import SentenceTransformer
-        
-        target_path = self.local_dir if (self.local_dir and self.local_dir.exists()) else Path(self.model_name)
-        print(f"[BGE-M3] Loading real BGE-M3 model from local path '{target_path.resolve()}' (Offline mode: zero network calls)...")
-        
-        try:
-            self.st_model = SentenceTransformer(str(target_path), device="cpu", local_files_only=True)
-            self.model_source_path = str(target_path.resolve())
-            print(f"[BGE-M3] Real neural model loaded successfully from '{self.model_source_path}'!")
-        except Exception as e:
-            err_msg = f"CRITICAL ERROR: Failed to load BGE-M3 model from local disk path '{target_path}': {e}. Silent fake fallbacks are disabled."
-            print(f"[BGE-M3] {err_msg}")
-            raise RuntimeError(err_msg) from e
-
-    def encode(self, texts: List[str]) -> np.ndarray:
-        """Executes real neural .encode() call on BGE-M3 sentence-transformer model."""
-        if self.st_model is None:
-            raise RuntimeError("BGE-M3 model is not loaded. Silent fake fallback is disabled.")
-        
-        embeddings = self.st_model.encode(texts, show_progress_bar=False, normalize_embeddings=True)
-        return np.array(embeddings, dtype=np.float32)
-
-# Singleton BGE-M3 Encoder Model Instance
-bge_m3_encoder = BGEM3Encoder(EMBEDDING_MODEL)
-
 class IntelliMeshRAG:
     """
-    Air-gapped hybrid RAG pipeline (BM25 + Dense BGE-M3 in ChromaDB + RRF + Metadata Citation)
+    Air-gapped hybrid RAG pipeline (BM25 + Dense Qwen3 Embeddings in ChromaDB + RRF + Metadata Citation)
     Grounded in manuals, SOPs, correspondence, and engineering drawings (P&ID) for PS26117.
     """
 
@@ -95,7 +81,7 @@ class IntelliMeshRAG:
         self.chunk_size = 400
         self.chunk_overlap = 80
         self.embedding_model = EMBEDDING_MODEL
-        self.bge_m3_model = bge_m3_encoder
+        self.embedding_encoder = qwen3_embedding_encoder
         self.chroma_collection = chroma_collection
         self.reload_documents()
 
@@ -116,7 +102,7 @@ class IntelliMeshRAG:
         return "manual"
 
     def reload_documents(self):
-        """Scans data/knowledge_base, ingests chunks, encodes with BGE-M3 .encode(), and stores in ChromaDB."""
+        """Scans data/knowledge_base, ingests chunks, encodes with the configured Qwen3 embedding model, and stores in ChromaDB."""
         self.documents = []
         if not self.kb_dir.exists():
             self.kb_dir.mkdir(parents=True, exist_ok=True)
@@ -146,7 +132,7 @@ class IntelliMeshRAG:
                 except Exception as e:
                     print(f"Error ingesting file {file_path.name}: {e}")
 
-        # Store in ChromaDB vector store via real BGE-M3 .encode()
+        # Store in ChromaDB vector store using the configured embedding model
         if self.documents and self.chroma_collection is not None:
             ids = [d["id"] for d in self.documents]
             texts = [d["content"] for d in self.documents]
@@ -160,8 +146,8 @@ class IntelliMeshRAG:
                     m["tags"] = ", ".join(m["tags"])
                 metadatas.append({k: (v if v is not None else "") for k, v in m.items()})
 
-            # Real BGE-M3 .encode() call
-            embeddings = self.bge_m3_model.encode(texts)
+            # Real Qwen3-Embedding-0.6B .encode() call
+            embeddings = self.embedding_encoder.encode(texts)
             embeddings_list = embeddings.tolist()
 
             try:
@@ -412,14 +398,14 @@ class IntelliMeshRAG:
 
     def _dense_vector_search(self, query: str, top_k: int = 15) -> List[Tuple[Dict, float]]:
         """
-        Dense Vector Search using real BGE-M3 model .encode() call against persistent ChromaDB collection.
+        Dense Vector Search using real Qwen3-Embedding-0.6B model .encode() call against persistent ChromaDB collection.
         Converts cosine distances into meaningful similarity scores (0.5+ range).
         """
         if not self.documents:
             return []
 
-        # 1. Encode query with BGE-M3 model .encode()
-        query_embedding = self.bge_m3_model.encode([query])[0]
+        # 1. Encode query with Qwen3-Embedding-0.6B model .encode()
+        query_embedding = self.embedding_encoder.encode([query])[0]
         
         scores: List[Tuple[Dict, float]] = []
 
@@ -447,9 +433,9 @@ class IntelliMeshRAG:
             except Exception as e:
                 print(f"[ChromaDB] Query notice: {e}")
 
-        # Fallback vector cosine dot product using BGE-M3 dense embeddings
+        # Fallback vector cosine dot product using Qwen3-Embedding-0.6B dense embeddings
         doc_texts = [d["content"] for d in self.documents]
-        doc_embeddings = self.bge_m3_model.encode(doc_texts)
+        doc_embeddings = self.embedding_encoder.encode(doc_texts)
 
         for idx, doc in enumerate(self.documents):
             d_emb = doc_embeddings[idx]
@@ -479,7 +465,7 @@ class IntelliMeshRAG:
 
     def search(self, query: str, top_k: int = 4) -> List[Dict[str, Any]]:
         """Hybrid search with RRF merging & metadata citations."""
-        self.reload_documents()
+        
         if not self.documents:
             return []
 
@@ -500,7 +486,7 @@ class IntelliMeshRAG:
                 "content": doc["content"],
                 "metadata": doc["metadata"],
                 "score": round(score, 4),
-                "dense_bge_m3_score": round(dense_sim, 4)
+                "dense_embedding_score": round(dense_sim, 4)
             })
             if len(results) >= top_k:
                 break
@@ -526,3 +512,7 @@ class IntelliMeshRAG:
         return self.search(query=query, top_k=top_k)
 
 rag_engine = IntelliMeshRAG()
+
+
+
+

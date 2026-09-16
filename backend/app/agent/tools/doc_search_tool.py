@@ -5,7 +5,7 @@ from app.audit_logger import audit_logger
 def search_knowledge_base(query: str, top_k: int = 4, job_id: str = "orchestrator") -> str:
     """
     Searches internal SOP manuals, engineering guidelines, and inspection standards.
-    Returns grounded context passages with source citations via BGE-M3 + ChromaDB IntelliMesh RAG.
+    Returns grounded context passages with source citations via Qwen3-Embedding + ChromaDB IntelliMesh RAG.
     """
     try:
         results_text = rag_search_kb(query=query, top_k=top_k)

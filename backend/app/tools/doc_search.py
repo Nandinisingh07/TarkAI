@@ -10,7 +10,7 @@ def internal_document_search(query: str, top_k: int = 4):
 def search_knowledge_base(query: str, top_k: int = 4) -> str:
     """
     Searches internal air-gapped industrial knowledge base (SOPs, manuals, safety guidelines, drawings)
-    using IntelliMesh RAG (BGE-M3 Dense + BM25 + RRF).
+    using IntelliMesh RAG (Qwen3-Embedding Dense + BM25 + RRF).
     Returns relevant context passages with source citations and metadata.
     """
     results = internal_document_search(query, top_k=top_k)
