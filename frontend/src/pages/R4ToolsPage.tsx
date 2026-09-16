@@ -39,7 +39,7 @@ export const R4ToolsPage: React.FC = () => {
       name: 'vision_tool',
       file: 'backend/app/tools/vision_tool.py',
       functions: 'describe_image(file_path, prompt)',
-      desc: 'Multimodal vision inspection via local moondream2 model using Ollama /api/generate base64 API.',
+      desc: 'Multimodal vision inspection via local moondream model using Ollama /api/generate base64 API.',
       icon: Eye,
       color: 'var(--accent-cyan)',
     },
@@ -62,7 +62,7 @@ export const R4ToolsPage: React.FC = () => {
           <h2 className="hero-title">Multimodal AI & 6-Tool Modular Suite (Requirement R4)</h2>
         </div>
         <p className="hero-desc">
-          Satisfies PS26117 Requirement 4: Comprehensive suite of 6 air-gapped industrial tools. Includes multimodal vision inspection via <code>moondream2</code>, OCR text extraction via Tesseract/pypdf for scanned engineering documents, and sandboxed code execution.
+          Satisfies PS26117 Requirement 4: Comprehensive suite of 6 air-gapped industrial tools. Includes multimodal vision inspection via <code>moondream</code>, OCR text extraction via Tesseract/pypdf for scanned engineering documents, and sandboxed code execution.
         </p>
       </div>
 
@@ -81,7 +81,7 @@ export const R4ToolsPage: React.FC = () => {
 
           <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-blue)', marginBottom: '0.3rem' }}>STEP 2: OCR / VISION</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Tesseract & Moondream2</div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Tesseract & Moondream</div>
             <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Extracts text raster pixels or analyzes visual diagram features locally.</p>
           </div>
 

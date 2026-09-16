@@ -39,10 +39,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (!isMounted) return;
 
         setTaskStatus(statusRes.status);
-        setCurrentStep(statusRes.current_step);
+        setCurrentStep(statusRes.current_step || 0);
         setTrace(statusRes.trace || []);
         setModelUsed(statusRes.model_used);
-        setRoutingReason(statusRes.routing_reason);
+        setRoutingReason(statusRes.routing_reason || '');
 
         if (statusRes.status === 'completed') {
           clearInterval(pollInterval);

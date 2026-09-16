@@ -14,7 +14,7 @@
    - `code_sandbox.py`: Subprocess code execution with 10s timeout in isolated temp environment.
    - `doc_search.py`: IntelliMesh RAG pipeline (BM25 + TF-IDF Vector Space + RRF + MMR) over local SOPs with source citations.
    - `ocr_tool.py`: Text extraction for scanned PDFs and industrial documents.
-   - `vision_tool.py`: Multimodal image description via `moondream2`.
+   - `vision_tool.py`: Multimodal image description via `moondream`.
 5. **DELIVERABLE GENERATION**: Generates downloadable industrial documents (`.docx`, `.pptx`, `.xlsx`, `.txt`) using `python-docx`, `python-pptx`, and `openpyxl`.
 6. **KNOWLEDGE BASE GROUNDING**: Grounded responses based on local SOPs in `data/knowledge_base/` with inline citations.
 7. **AIR-GAP GUARD PANEL**: React UI panel polling `/monitor/status` every 3 seconds with active green shield and live audit logs.
@@ -25,7 +25,7 @@
 
 - **CPU**: Standard x86_64 / ARM CPU (no GPU required for Phase 1).
 - **RAM**: Minimum 8 GB RAM (16 GB recommended).
-- **Disk Space**: ~6 GB free space (for Ollama lightweight models `qwen2.5-coder:1.5b`, `phi3:mini`, and `moondream2`).
+- **Disk Space**: ~6 GB free space (for Ollama lightweight models `qwen2.5-coder:1.5b`, `phi3:mini`, and `moondream`).
 
 ---
 

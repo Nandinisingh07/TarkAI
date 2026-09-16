@@ -1,0 +1,11 @@
+MRPL CONFIDENTIAL OPERATIONAL SOP #SOP-2026-VALVE-09
+TITLE: High-Pressure Valve Shutdown Protocol
+
+1. SAFETY THRESHOLD:
+If emergency flare line pressure exceeds 115.4 kPa, immediately activate isolation valve IV-402.
+
+2. TIMING SPECIFICATION:
+Isolation valve IV-402 must achieve 100% seal within 2.5 seconds of signal trigger.
+
+3. REPORTING REQUIREMENTS:
+Log incident to MRPL Air-Gapped Workbench and flag for Chief Engineer approval.

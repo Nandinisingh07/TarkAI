@@ -8,6 +8,8 @@ import { Footer } from './components/Footer';
 
 import { LandingPage } from './pages/LandingPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { ReviewGatePage } from './pages/ReviewGatePage';
+import { OperationsDashboardPage } from './pages/OperationsDashboardPage';
 import { R1AirGappedPage } from './pages/R1AirGappedPage';
 import { R2RouterPage } from './pages/R2RouterPage';
 import { R3ReActPage } from './pages/R3ReActPage';
@@ -34,6 +36,8 @@ export const App: React.FC = () => {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/review" element={<ReviewGatePage />} />
+                <Route path="/operations" element={<OperationsDashboardPage />} />
                 <Route path="/requirements/r1" element={<R1AirGappedPage />} />
                 <Route path="/requirements/r2" element={<R2RouterPage />} />
                 <Route path="/requirements/r3" element={<R3ReActPage />} />
@@ -42,6 +46,7 @@ export const App: React.FC = () => {
                 <Route path="/requirements/r6" element={<R6RAGPage />} />
                 <Route path="/requirements/r7" element={<R7NetworkProofPage />} />
               </Routes>
+
 
               <Footer />
             </main>

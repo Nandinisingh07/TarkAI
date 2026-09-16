@@ -18,8 +18,8 @@ ollama pull qwen2.5-coder:1.5b
 echo "2. Pulling phi3:mini..."
 ollama pull phi3:mini
 
-echo "3. Pulling moondream2..."
-ollama pull moondream2
+echo "3. Pulling moondream..."
+ollama pull moondream
 
 echo "All required open-weight models loaded successfully into local Ollama server."
 

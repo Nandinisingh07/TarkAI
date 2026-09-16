@@ -1,39 +1,19 @@
-import re
-from app.config.settings import settings
+from app.model_router import model_router
 
 class TaskRouter:
     """
     Router module that auto-selects the appropriate local LLM based on task classification.
-    Fully configurable via models.json / settings. Zero hardcoded model names.
+    Delegates to model_router.py (Two-Stage Hybrid Router).
     """
 
     @staticmethod
-    def classify_task(task_description: str) -> dict:
-        settings.reload()
-        text_lower = task_description.lower()
-        keywords = settings.CODER_KEYWORDS
-        
-        matched_keywords = []
-        for kw in keywords:
-            # Match whole words or standard code terms
-            if re.search(r'\b' + re.escape(kw) + r'\b', text_lower):
-                matched_keywords.append(kw)
-        
-        # Check code snippets or curly braces / indents
-        has_code_syntax = bool(re.search(r'(```|def |class |import |function |const |var |let |select |from |where )', text_lower))
-
-        if matched_keywords or has_code_syntax:
-            selected_model = settings.CODER_MODEL
-            category = "coding"
-            reason = f"Routed to Coder model ({selected_model}) due to matched keywords: {matched_keywords or ['code syntax pattern']}"
-        else:
-            selected_model = settings.GENERAL_MODEL
-            category = "general"
-            reason = f"Routed to General model ({selected_model}) for general reasoning & deliverable generation"
-
+    def classify_task(task_description: str, attached_files: list = None) -> dict:
+        decision = model_router.classify_and_route(task_description, attached_files=attached_files, log_audit=True)
         return {
-            "model": selected_model,
-            "category": category,
-            "reason": reason,
-            "matched_keywords": matched_keywords
+            "model": decision["selected_model"],
+            "category": decision["task_type"],
+            "reason": decision["reason"],
+            "matched_keywords": decision["matched_keywords"],
+            "matched_stage": decision["matched_stage"],
+            "confidence": decision["confidence"]
         }

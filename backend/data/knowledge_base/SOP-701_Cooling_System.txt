@@ -1,0 +1,5 @@
+STANDARD OPERATING PROCEDURE: SOP-701
+TITLE: Primary Thermal Fluid Circulation & Cooling Loop Protocols
+1. System Inspection:
+Inspect centrifugal pump P-102 and isolation valves V-301 for cooling fluid flow rates.
+Differential pressure must be maintained at 12.5 bar.

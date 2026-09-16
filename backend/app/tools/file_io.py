@@ -16,12 +16,22 @@ def _get_safe_path(rel_or_abs_path: str) -> Path:
         raise PermissionError(f"Access denied: Path '{rel_or_abs_path}' is outside sandbox/uploads directory.")
     return target
 
+from app.audit_logger import audit_logger
+
 def read_file(path: str) -> str:
     """Reads file content from the sandboxed workspace."""
     try:
         target = _get_safe_path(path)
         if not target.exists():
             return f"Error: File '{path}' does not exist."
+
+        audit_logger.log_event(
+            action="FILE_ACCESSED",
+            resource=target.name,
+            status="SUCCESS",
+            details={"path": str(target), "mode": "read"}
+        )
+
         with open(target, "r", encoding="utf-8", errors="ignore") as f:
             return f.read()
     except Exception as e:
@@ -34,6 +44,15 @@ def write_file(path: str, content: str) -> str:
         target.parent.mkdir(parents=True, exist_ok=True)
         with open(target, "w", encoding="utf-8") as f:
             f.write(content)
+
+        audit_logger.log_event(
+            action="FILE_ACCESSED",
+            resource=target.name,
+            status="SUCCESS",
+            details={"path": str(target), "mode": "write", "bytes": len(content)}
+        )
+
         return f"Successfully written {len(content)} characters to '{target.name}' in sandbox."
     except Exception as e:
         return f"Error writing file '{path}': {str(e)}"
+

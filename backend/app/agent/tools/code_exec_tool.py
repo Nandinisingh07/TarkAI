@@ -1,27 +1,31 @@
+import os
 import sys
 import subprocess
 import tempfile
-import os
 from pathlib import Path
+from app.config.settings import settings
+from app.audit_logger import audit_logger
 
-def execute_code(code: str, language: str = "python") -> str:
+def execute_code(code: str, language: str = "python", job_id: str = "orchestrator", timeout_seconds: int = 10) -> str:
     """
-    Executes code in a sandboxed subprocess with a 10-second timeout.
-    Supports python and bash/powershell scripts safely.
+    Executes python/bash code in an isolated subprocess with no network access.
+    Captures stdout, stderr, and exit code. Enforces timeout.
     """
     lang = language.lower().strip()
     if lang not in ["python", "py", "bash", "sh", "powershell", "ps1"]:
-        return f"Error: Unsupported language '{language}'. Supported: python, bash, powershell."
+        return f"Error: Unsupported language '{language}'."
 
-    with tempfile.TemporaryDirectory() as temp_dir:
+    sandbox_dir = settings.SANDBOX_DIR
+    clean_env = os.environ.copy()
+    clean_env["HTTP_PROXY"] = "http://127.0.0.1:9999" # invalid proxy blocking egress
+    clean_env["HTTPS_PROXY"] = "http://127.0.0.1:9999"
+    clean_env["NO_PROXY"] = ""
+
+    with tempfile.TemporaryDirectory(dir=sandbox_dir) as temp_dir:
         temp_path = Path(temp_dir)
-        
-        clean_env = os.environ.copy()
-        clean_env["HTTP_PROXY"] = "http://127.0.0.1:9999"
-        clean_env["HTTPS_PROXY"] = "http://127.0.0.1:9999"
-        clean_env["NO_PROXY"] = ""
         clean_env["PYTHONPATH"] = str(temp_path)
 
+        # Inject sitecustomize.py to enforce interpreter & process-level network isolation with bypass hardening
         sitecustomize_file = temp_path / "sitecustomize.py"
         sitecustomize_content = """import os
 import sys
@@ -122,7 +126,7 @@ _apply_all_patches()
             file_name = temp_path / "script.sh"
             file_name.write_text(code, encoding="utf-8")
             cmd = ["bash", str(file_name)]
-        else:  # powershell
+        else:
             file_name = temp_path / "script.ps1"
             file_name.write_text(code, encoding="utf-8")
             cmd = ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(file_name)]
@@ -135,22 +139,45 @@ _apply_all_patches()
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                timeout=10
+                timeout=timeout_seconds
             )
             stdout = res.stdout.strip()
             stderr = res.stderr.strip()
             
-            output = []
+            output_parts = []
             if stdout:
-                output.append(f"STDOUT:\n{stdout}")
+                output_parts.append(f"STDOUT:\n{stdout}")
             if stderr:
-                output.append(f"STDERR:\n{stderr}")
-            if not output:
-                output.append("Execution completed with no output (Exit Code 0).")
-            
-            return f"[Exit Code {res.returncode}]\n" + "\n".join(output)
+                output_parts.append(f"STDERR:\n{stderr}")
+            if not output_parts:
+                output_parts.append("Execution completed with no output (Exit Code 0).")
+
+            result_str = f"[Exit Code {res.returncode}]\n" + "\n".join(output_parts)
+
+            audit_logger.log_event(
+                action="TOOL_EXECUTED",
+                resource=f"execute_code({lang})",
+                status="SUCCESS" if res.returncode == 0 else "EXECUTION_ERROR",
+                details={"tool": "execute_code", "language": lang, "exit_code": res.returncode, "job_id": job_id}
+            )
+
+            return result_str
 
         except subprocess.TimeoutExpired:
-            return "Error: Code execution timed out after 10 seconds limit."
+            msg = f"Error: Code execution timed out after {timeout_seconds}s limit."
+            audit_logger.log_event(
+                action="TOOL_EXECUTED",
+                resource=f"execute_code({lang})",
+                status="TIMEOUT",
+                details={"tool": "execute_code", "error": "timeout", "job_id": job_id}
+            )
+            return msg
         except Exception as e:
-            return f"Error executing code: {str(e)}"
+            msg = f"Error executing code: {str(e)}"
+            audit_logger.log_event(
+                action="TOOL_EXECUTED",
+                resource=f"execute_code({lang})",
+                status="ERROR",
+                details={"tool": "execute_code", "error": str(e), "job_id": job_id}
+            )
+            return msg

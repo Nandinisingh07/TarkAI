@@ -2,19 +2,25 @@ import os
 import json
 from pathlib import Path
 
+from app.config.model_registry import model_registry
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 CONFIG_PATH = Path(__file__).resolve().parent / "models.json"
 
 def load_config():
     if CONFIG_PATH.exists():
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            pass
     return {
-        "coder_model": "qwen2.5-coder:1.5b",
-        "general_model": "phi3:mini",
-        "vision_model": "moondream2",
         "ollama_base_url": "http://localhost:11434",
-        "coder_keywords": ["code", "script", "python", "function", "debug", "error", "bug", "sql"]
+        "coder_keywords": [
+            "code", "script", "python", "function", "debug", "error", "bug", "algorithm",
+            "refactor", "sql", "html", "javascript", "css", "class", "programming",
+            "syntax", "compile", "traceback", "exception"
+        ]
     }
 
 class Settings:
@@ -23,6 +29,7 @@ class Settings:
     
     def reload(self):
         self._config = load_config()
+        model_registry.reload()
 
     @property
     def OLLAMA_BASE_URL(self) -> str:
@@ -30,15 +37,27 @@ class Settings:
 
     @property
     def CODER_MODEL(self) -> str:
-        return os.getenv("CODER_MODEL", self._config.get("coder_model", "qwen2.5-coder:1.5b"))
+        return model_registry.CODING_MODEL
 
     @property
     def GENERAL_MODEL(self) -> str:
-        return os.getenv("GENERAL_MODEL", self._config.get("general_model", "phi3:mini"))
+        return model_registry.GENERAL_MODEL
 
     @property
     def VISION_MODEL(self) -> str:
-        return os.getenv("VISION_MODEL", self._config.get("vision_model", "moondream2"))
+        return model_registry.VISION_MODEL
+
+    @property
+    def OCR_ENGINE(self) -> str:
+        return model_registry.OCR_ENGINE
+
+    @property
+    def OBJECT_DETECTION_MODEL(self) -> str:
+        return model_registry.OBJECT_DETECTION_MODEL
+
+    @property
+    def CONFIDENCE_THRESHOLD(self) -> float:
+        return model_registry.CONFIDENCE_THRESHOLD
 
     @property
     def CODER_KEYWORDS(self) -> list:
@@ -69,3 +88,4 @@ class Settings:
         return p
 
 settings = Settings()
+

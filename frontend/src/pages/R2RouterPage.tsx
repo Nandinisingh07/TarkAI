@@ -77,7 +77,7 @@ export const R2RouterPage: React.FC = () => {
         <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
             <Eye size={20} color="var(--accent-amber)" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>moondream2</h3>
+            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>moondream</h3>
           </div>
           <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
             Ultra-lightweight multimodal vision model for describing industrial technical diagrams, equipment photos, and scanned engineering schematics.
@@ -98,7 +98,7 @@ export const R2RouterPage: React.FC = () => {
           <div>⚙️ <strong>Configuration File:</strong> <code>backend/app/config/models.json</code></div>
           <div>⚡ <strong>Coder Model:</strong> <code>qwen2.5-coder:1.5b</code></div>
           <div>🧠 <strong>General Model:</strong> <code>phi3:mini</code></div>
-          <div>👁️ <strong>Vision Model:</strong> <code>moondream2</code></div>
+          <div>👁️ <strong>Vision Model:</strong> <code>moondream</code></div>
         </div>
       </div>
 

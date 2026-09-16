@@ -16,6 +16,8 @@ export const DefenseNav: React.FC = () => {
   const mainNav = [
     { to: '/', label: 'System Overview', icon: LayoutGrid, id: '00' },
     { to: '/dashboard', label: 'Mission Console', icon: Terminal, id: '00' },
+    { to: '/review', label: 'Approval Gate', icon: FileCheck, id: '00' },
+    { to: '/operations', label: 'Model Ops & SOC', icon: Database, id: '00' },
   ];
 
   const moduleNav = [
@@ -27,6 +29,7 @@ export const DefenseNav: React.FC = () => {
     { to: '/requirements/r6', label: 'Knowledge RAG', icon: Database, id: 'R6' },
     { to: '/requirements/r7', label: 'Security SOC', icon: ShieldAlert, id: 'R7' },
   ];
+
 
   return (
     <aside className="module-rail">

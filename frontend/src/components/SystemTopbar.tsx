@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, ShieldAlert, Lock, Activity, ChevronDown, ChevronUp } from 'lucide-react';
-import { fetchAirGapStatus } from '../services/api';
+import { Lock, Activity, ChevronUp, ChevronDown } from 'lucide-react';
+import { fetchAirGapStatus, setUserRole, getUserRole } from '../services/api';
 import { AirGapStatusData } from '../types';
 
 export const SystemTopbar: React.FC = () => {
   const [data, setData] = useState<AirGapStatusData | null>(null);
   const [showLogs, setShowLogs] = useState(false);
   const [clockStr, setClockStr] = useState<string>('');
+  const [currentRole, setCurrentRoleState] = useState<'admin' | 'engineer' | 'viewer'>('admin');
+
+  const handleRoleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newRole = e.target.value as 'admin' | 'engineer' | 'viewer';
+    setCurrentRoleState(newRole);
+    setUserRole(newRole);
+  };
 
   // Clock timer
   useEffect(() => {
@@ -55,7 +62,30 @@ export const SystemTopbar: React.FC = () => {
         <span style={{ color: 'var(--text-secondary)' }}>NODE: <strong style={{ color: 'var(--text-primary)' }}>LOCAL-01</strong></span>
       </div>
 
-      <div className="topbar-right">
+      <div className="topbar-right" style={{ gap: '10px' }}>
+        {/* Feature 5: RBAC Interactive Role Switcher */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
+          <span style={{ color: 'var(--text-secondary)' }}>ROLE:</span>
+          <select
+            value={currentRole}
+            onChange={handleRoleChange}
+            style={{
+              background: '#060d1f',
+              border: '1px solid var(--accent-cyan)',
+              color: 'var(--accent-cyan)',
+              fontSize: '10px',
+              fontWeight: 700,
+              padding: '1px 6px',
+              borderRadius: '3px',
+              cursor: 'pointer'
+            }}
+          >
+            <option value="admin">ADMIN (FULL ACCESS)</option>
+            <option value="engineer">ENGINEER (CREATE/SUBMIT)</option>
+            <option value="viewer">VIEWER (READ-ONLY)</option>
+          </select>
+        </div>
+
         <button
           onClick={() => setShowLogs(!showLogs)}
           className="btn-outline"
@@ -70,6 +100,7 @@ export const SystemTopbar: React.FC = () => {
           {clockStr || '2026-09-10 12:30:00 UTC'}
         </span>
       </div>
+
 
       {showLogs && (
         <div
@@ -116,7 +147,7 @@ export const SystemTopbar: React.FC = () => {
 
           <div className="terminal-log">
             {!data?.log?.length && <div style={{ color: 'var(--text-secondary)' }}>Awaiting audit events...</div>}
-            {data?.log?.map((entry, idx) => {
+            {data?.log?.map((entry: string, idx: number) => {
               const isErr = entry.includes('WARNING') || entry.includes('EXTERNAL');
               return (
                 <div key={idx} className="log-row">
