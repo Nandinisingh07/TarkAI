@@ -1,4 +1,7 @@
-﻿# Python
+﻿cd "C:\Users\Nandini singh\Desktop\ON PREMISE"
+
+@"
+# Python
 __pycache__/
 *.pyc
 *.pyo
@@ -28,3 +31,14 @@ uploads/
 .idea/
 Thumbs.db
 .DS_Store
+
+# Model weights - too large for git
+data/models/
+*.bin
+*.safetensors
+
+# ChromaDB persistent storage
+**/chroma_db/
+**/tarkai_kb_bge_m3/
+**/*.parquet
+"@ | Set-Content -Encoding ASCII .gitignore
