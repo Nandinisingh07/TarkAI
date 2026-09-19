@@ -50,16 +50,17 @@ export const SystemTopbar: React.FC = () => {
   return (
     <header className="system-topbar">
       <div className="topbar-left">
-        <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-display)', fontSize: '12px' }}>
-          SOVEREIGN AI WORKBENCH
+        <span style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '14px', letterSpacing: '-0.01em' }}>
+          Tark AI
+        </span>
+        <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>
+          National Confidential AI Operations Platform
         </span>
         <span style={{ color: 'var(--border-medium)' }}>|</span>
         <span className={`status-badge ${isSecure ? 'nominal' : 'fault'}`}>
-          <Lock size={11} />
-          {isSecure ? 'AIR-GAP: LOCKED' : `WARNING: ${data?.external_calls_detected} EGRESS`}
+          <Lock size={12} />
+          {isSecure ? 'AIR-GAP: SECURE' : `WARNING: ${data?.external_calls_detected} EGRESS DETECTED`}
         </span>
-        <span style={{ color: 'var(--border-medium)' }}>|</span>
-        <span style={{ color: 'var(--text-secondary)' }}>NODE: <strong style={{ color: 'var(--text-primary)' }}>LOCAL-01</strong></span>
       </div>
 
       <div className="topbar-right" style={{ gap: '10px' }}>

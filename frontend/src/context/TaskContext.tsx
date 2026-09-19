@@ -13,6 +13,7 @@ interface TaskContextType {
   deliverable: DeliverableInfo | undefined;
   isLoading: boolean;
   handleTaskSubmit: (prompt: string, files: string[]) => Promise<void>;
+  resetTask: () => void;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -28,7 +29,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [deliverable, setDeliverable] = useState<DeliverableInfo | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Poll active task status
+    // Poll active task status
   useEffect(() => {
     if (!taskId || taskStatus === 'completed' || taskStatus === 'failed') return;
 
@@ -47,12 +48,6 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (statusRes.status === 'completed') {
           clearInterval(pollInterval);
           setIsLoading(false);
-          // Fetch final result
-          const resData = await getTaskResult(taskId);
-          if (isMounted) {
-            setResultData(resData.result);
-            setDeliverable(resData.deliverable);
-          }
         }
       } catch (err) {
         console.error('Error polling status:', err);
@@ -62,6 +57,29 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       isMounted = false;
       clearInterval(pollInterval);
+    };
+  }, [taskId, taskStatus]);
+
+  // Fetch final result once task is completed (separate effect avoids
+  // the polling-interval's isMounted cleanup racing with this await)
+  useEffect(() => {
+    if (!taskId || taskStatus !== 'completed') return;
+
+    let isMounted = true;
+    (async () => {
+      try {
+        const resData = await getTaskResult(taskId);
+        if (isMounted) {
+          setResultData(resData.result);
+          setDeliverable(resData.deliverable);
+        }
+      } catch (err) {
+        console.error('Error fetching task result:', err);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
     };
   }, [taskId, taskStatus]);
 
@@ -84,6 +102,18 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const resetTask = () => {
+    setTaskId(null);
+    setModelUsed('');
+    setRoutingReason('');
+    setTaskStatus('idle');
+    setCurrentStep(0);
+    setTrace([]);
+    setResultData(null);
+    setDeliverable(undefined);
+    setIsLoading(false);
+  };
+
   return (
     <TaskContext.Provider
       value={{
@@ -97,6 +127,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         deliverable,
         isLoading,
         handleTaskSubmit,
+        resetTask,
       }}
     >
       {children}

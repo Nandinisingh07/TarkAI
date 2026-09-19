@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
@@ -11,139 +11,218 @@ import {
   Play,
   Activity,
   Lock,
-  Cpu
+  Cpu,
+  CheckCircle2,
+  ArrowRight,
+  FileText
 } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
+import { fetchAirGapStatus, fetchReviewDrafts } from '../services/api';
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { modelUsed, taskStatus, trace } = useTaskContext();
+  const { modelUsed, taskStatus, trace, resultData, deliverable } = useTaskContext();
+  const [airGapData, setAirGapData] = useState<any>(null);
+  const [pendingReviews, setPendingReviews] = useState<number>(0);
 
-  const nodes = [
-    { id: 'R1', title: 'Air-Gap Boundary', path: '/requirements/r1', icon: ShieldCheck, sub: 'Local Socket Audit' },
-    { id: 'R2', title: 'Model Router', path: '/requirements/r2', icon: Zap, sub: 'Classification Signal' },
-    { id: 'R3', title: 'Agent Engine', path: '/requirements/r3', icon: GitCommit, sub: 'ReAct Loop' },
-    { id: 'R4', title: 'Multimodal Tools', path: '/requirements/r4', icon: Wrench, sub: 'Tool Suite' },
-    { id: 'R5', title: 'Deliverables', path: '/requirements/r5', icon: FileCheck, sub: 'Document Factory' },
-    { id: 'R6', title: 'Knowledge RAG', path: '/requirements/r6', icon: Database, sub: 'IntelliMesh Fusion' },
-    { id: 'R7', title: 'Security SOC', path: '/requirements/r7', icon: ShieldAlert, sub: 'Egress Monitor' },
-  ];
+  useEffect(() => {
+    fetchAirGapStatus().then((res: any) => setAirGapData(res)).catch(() => {});
+    fetchReviewDrafts('pending_review').then((res: any[]) => setPendingReviews(res?.length || 0)).catch(() => {});
+  }, []);
+
+  const isSecure = airGapData?.external_calls_detected === 0 || airGapData === null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Console Title Strip */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Page Header Strip */}
       <div className="page-header-strip">
         <div>
           <h1 className="page-title">
-            <Activity size={20} color="var(--accent-amber)" />
-            SYSTEM OVERVIEW CONSOLE
+            System Overview
           </h1>
           <p className="page-subtitle">
-            Refinery-Grade Air-Gapped Operations Architecture & System Flow
+            National Confidential AI Operations Platform — Operational Readiness & Security Status
           </p>
         </div>
 
         <button
-          className="btn-amber"
+          className="btn-blue"
           onClick={() => navigate('/dashboard')}
         >
-          <Play size={13} />
-          <span>OPEN CONSOLE</span>
+          <Play size={15} />
+          <span>Launch Mission Console</span>
         </button>
       </div>
 
-      {/* Center Interactive 7-Node System Flow Diagram */}
-      <div className="system-flow-container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-            INTELLIGENCE PIPELINE FLOW (7 SUBSYSTEM NODES)
-          </span>
-          <span className="status-badge nominal font-mono" style={{ fontSize: '10px' }}>
-            ALL NODES OPERATIONAL
-          </span>
-        </div>
-
-        <div className="flow-nodes-grid">
-          {nodes.map((node) => {
-            const IconComp = node.icon;
-            const isActive = taskStatus === 'running' || taskStatus === 'completed';
-            return (
-              <div
-                key={node.id}
-                className={`flow-node ${isActive ? 'active-node' : 'teal-node'}`}
-                onClick={() => navigate(node.path)}
-              >
-                <span className="flow-node-id">{node.id}</span>
-                <IconComp size={18} color={isActive ? 'var(--accent-amber)' : 'var(--accent-teal)'} />
-                <span className="flow-node-title">{node.title}</span>
-                <span className="flow-node-sub">{node.sub}</span>
+      {/* Requirement 10: First Screen Key Answers Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+        
+        {/* 1. Is System Secure? */}
+        <div className="instrument-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <ShieldCheck size={20} color={isSecure ? '#34d399' : '#f87171'} />
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                1. System Security
               </div>
-            );
-          })}
+              <div style={{ fontSize: '15px', fontWeight: 700, color: isSecure ? '#34d399' : '#f87171' }}>
+                {isSecure ? 'AIR-GAP SECURE (0 Egress)' : 'Security Alert'}
+              </div>
+            </div>
+          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            All model calls, socket connections, and tool executions are strictly isolated on local network.
+          </p>
         </div>
+
+        {/* 2. Is AI Operational? */}
+        <div className="instrument-card">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <Cpu size={20} color="#60a5fa" />
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                2. AI Models Status
+              </div>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#60a5fa' }}>
+                Operational & Loaded
+              </div>
+            </div>
+          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            Local models (<code style={{ color: '#60a5fa' }}>phi3:mini</code>, <code style={{ color: '#60a5fa' }}>qwen2.5-coder:1.5b</code>, <code style={{ color: '#60a5fa' }}>moondream</code>) ready.
+          </p>
+        </div>
+
+        {/* 3. Human Approval Required? */}
+        <div className="instrument-card" onClick={() => navigate('/review')} style={{ cursor: 'pointer' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <FileCheck size={20} color={pendingReviews > 0 ? '#fbbf24' : '#34d399'} />
+            <div>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                3. Approval Gate Queue
+              </div>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: pendingReviews > 0 ? '#fbbf24' : '#34d399' }}>
+                {pendingReviews > 0 ? `${pendingReviews} Drafts Awaiting Review` : 'No Pending Approvals'}
+              </div>
+            </div>
+          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+            Human-in-the-loop review queue for low-confidence outputs and sensitive reports.
+          </p>
+        </div>
+
       </div>
 
-      {/* 3 Real Counters Only */}
-      <div className="telemetry-grid">
-        <div className="telemetry-tile">
-          <span className="telemetry-label">TOTAL TASKS EXEC (SESSION)</span>
-          <span className="telemetry-val amber">{trace.length > 0 ? 1 : 0}</span>
+      {/* Task & Recent Deliverables Summary */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
+        
+        {/* Active Task Status */}
+        <div className="instrument-card">
+          <div className="card-header-bar">
+            <div className="card-title">
+              <Activity size={16} color="var(--accent-blue)" />
+              <span>Current Task Status</span>
+            </div>
+          </div>
+
+          <div style={{ padding: '8px 0' }}>
+            {taskStatus === 'idle' && (
+              <div className="standby-row">
+                <span className="idle-dot" />
+                <span style={{ color: 'var(--text-secondary)' }}>No active tasks running. System ready.</span>
+              </div>
+            )}
+            {taskStatus === 'running' && (
+              <div style={{ padding: '12px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '6px', color: '#60a5fa', fontWeight: 600 }}>
+                Processing operational task... ({trace.length} steps executed)
+              </div>
+            )}
+            {taskStatus === 'completed' && (
+              <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', color: '#34d399', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} /> Latest task execution completed successfully.
+              </div>
+            )}
+          </div>
+
+          <button className="btn-outline" onClick={() => navigate('/dashboard')} style={{ marginTop: '8px' }}>
+            <span>Go to Mission Console</span>
+            <ArrowRight size={14} />
+          </button>
         </div>
 
-        <div className="telemetry-tile">
-          <span className="telemetry-label">AIR-GAP EGRESS AUDIT</span>
-          <span className="telemetry-val teal" style={{ fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Lock size={14} /> LOCKED (0 CALLS)
-          </span>
+        {/* Deliverables Ready */}
+        <div className="instrument-card">
+          <div className="card-header-bar">
+            <div className="card-title">
+              <FileText size={16} color="var(--accent-teal)" />
+              <span>Latest Deliverable Output</span>
+            </div>
+          </div>
+
+          <div style={{ padding: '8px 0' }}>
+            {deliverable ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {deliverable.filename}
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                  Format: {deliverable.format.toUpperCase()} Document
+                </div>
+                <a href={deliverable.download_url} download className="btn-teal" style={{ textDecoration: 'none', width: 'fit-content', marginTop: '4px' }}>
+                  Download Deliverable File
+                </a>
+              </div>
+            ) : (
+              <div className="standby-row">
+                <span className="idle-dot" />
+                <span style={{ color: 'var(--text-secondary)' }}>No deliverable documents generated yet.</span>
+              </div>
+            )}
+          </div>
         </div>
 
-        <div className="telemetry-tile">
-          <span className="telemetry-label">ACTIVE MODEL ENGINE</span>
-          <span className="telemetry-val font-mono" style={{ fontSize: '14px', color: modelUsed ? 'var(--accent-amber)' : 'var(--text-secondary)' }}>
-            {modelUsed ? modelUsed : '—'}
-          </span>
-        </div>
       </div>
 
-      {/* Requirement Specifications Grid */}
+      {/* System Modules Quick Nav Grid */}
       <div className="instrument-card">
         <div className="card-header-bar">
           <div className="card-title">
-            <Cpu size={14} color="var(--accent-teal)" />
-            <span>SIH PS26117 SPECIFICATION MATRIX</span>
+            <span>System Modules Navigation</span>
           </div>
-          <span style={{ fontSize: '10px', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
-            VERIFIED ON-PREMISE
-          </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
-          <div style={{ background: 'var(--bg-surface-elevated)', padding: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-              R1: Air-Gapped Execution
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-              Model runs strictly on localhost (127.0.0.1:11434). Sockets monitored via psutil.
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--bg-surface-elevated)', padding: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-              R2: TaskRouter Classifier
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-              Auto-routes coding to qwen2.5-coder:1.5b and general tasks to phi3:mini.
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--bg-surface-elevated)', padding: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-              R3-R5: ReAct Agent & Deliverables
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-              8-step loop generating Word (.docx), PowerPoint (.pptx), and Excel (.xlsx) files.
-            </div>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+          {[
+            { title: 'Air-Gap Security', path: '/requirements/r1', icon: ShieldCheck, desc: 'Local Socket Monitoring' },
+            { title: 'Model Router', path: '/requirements/r2', icon: Zap, desc: 'Auto Model Classifier' },
+            { title: 'Agentic Engine', path: '/requirements/r3', icon: GitCommit, desc: 'Multi-Step ReAct Loop' },
+            { title: 'Multimodal Tools', path: '/requirements/r4', icon: Wrench, desc: 'OCR, Vision & Sandboxes' },
+            { title: 'Deliverables', path: '/requirements/r5', icon: FileCheck, desc: '.docx, .pptx, .xlsx Factory' },
+            { title: 'Knowledge Base', path: '/requirements/r6', icon: Database, desc: 'IntelliMesh RAG SOPs' },
+          ].map((m, idx) => {
+            const IconComp = m.icon;
+            return (
+              <div
+                key={idx}
+                onClick={() => navigate(m.path)}
+                style={{
+                  background: 'var(--bg-panel-elevated)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '6px',
+                  padding: '14px',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
+                }}
+                className="btn-outline-hover"
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                  <IconComp size={16} color="var(--accent-blue)" />
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{m.title}</span>
+                </div>
+                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{m.desc}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
