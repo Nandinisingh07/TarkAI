@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Database, ShieldCheck, Activity, Cpu, Lock, Terminal } from 'lucide-react';
 import { fetchModelRegistry, fetchConfidenceStats, fetchAuditLogs } from '../services/api';
 import { ModelRegistrySummary, ConfidenceStats, AuditLogEntry } from '../types';
 
-export const OperationsDashboardPage: React.FC = () => {
+export const ModelOperationsPage: React.FC = () => {
   const [registry, setRegistry] = useState<ModelRegistrySummary | null>(null);
   const [confStats, setConfStats] = useState<ConfidenceStats | null>(null);
   const [auditLogs, setAuditLogs] = useState<AuditLogEntry[]>([]);

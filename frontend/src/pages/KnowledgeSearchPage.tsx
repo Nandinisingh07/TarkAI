@@ -1,17 +1,17 @@
-import React from 'react';
+﻿import React from 'react';
 import { HardDrive, Code2, Layers, Search, CheckCircle2, FileText } from 'lucide-react';
 
-export const R6RAGPage: React.FC = () => {
+export const KnowledgeSearchPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
       {/* Hero Header */}
       <div className="hero-section">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <HardDrive size={28} color="var(--accent-emerald)" />
-          <h2 className="hero-title">Local Knowledge Base & IntelliMesh RAG (Requirement R6)</h2>
+          <h2 className="hero-title">Local Knowledge Base & IntelliMesh RAG</h2>
         </div>
         <p className="hero-desc">
-          Satisfies PS26117 Requirement 6: Grounding agent responses in local industrial SOP documents (stored in <code>data/knowledge_base/</code>) rather than model-only knowledge. Exposes inline source citations (e.g. <code>[Source: SOP-302_Thermal_Power_Plant_Safety.txt]</code>) when knowledge passages are retrieved.
+          Grounding agent responses in local industrial SOP documents (stored in <code>data/knowledge_base/</code>) rather than model-only knowledge. Exposes inline source citations (e.g. <code>[Source: SOP-302_Thermal_Power_Plant_Safety.txt]</code>) when knowledge passages are retrieved.
         </p>
       </div>
 

@@ -1,53 +1,43 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { TaskProvider } from './context/TaskContext';
 import { SystemTopbar } from './components/SystemTopbar';
-import { DefenseNav } from './components/DefenseNav';
+import { SidebarNav } from './components/SidebarNav';
 import { Footer } from './components/Footer';
 
-import { LandingPage } from './pages/LandingPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { ReviewGatePage } from './pages/ReviewGatePage';
-import { OperationsDashboardPage } from './pages/OperationsDashboardPage';
-import { R1AirGappedPage } from './pages/R1AirGappedPage';
-import { R2RouterPage } from './pages/R2RouterPage';
-import { R3ReActPage } from './pages/R3ReActPage';
-import { R4ToolsPage } from './pages/R4ToolsPage';
-import { R5DeliverablesPage } from './pages/R5DeliverablesPage';
-import { R6RAGPage } from './pages/R6RAGPage';
-import { R7NetworkProofPage } from './pages/R7NetworkProofPage';
+import { HomePage } from './pages/HomePage';
+import { AIAssistantPage } from './pages/AIAssistantPage';
+import { ModelRouterPage } from './pages/ModelRouterPage';
+import { AgentReasoningPage } from './pages/AgentReasoningPage';
+import { ToolRegistryPage } from './pages/ToolRegistryPage';
+import { KnowledgeSearchPage } from './pages/KnowledgeSearchPage';
+import { DeliverablesPage } from './pages/DeliverablesPage';
+import { AirGapMonitorPage } from './pages/AirGapMonitorPage';
+import { ModelOperationsPage } from './pages/ModelOperationsPage';
+import { ApprovalGatePage } from './pages/ApprovalGatePage';
 
 export const App: React.FC = () => {
   return (
     <TaskProvider>
       <BrowserRouter>
         <div className="app-container">
-          {/* Top Persistent Identity Strip */}
           <SystemTopbar />
-
-          {/* Workbench Body Layout */}
           <div className="workbench-shell">
-            {/* Left-Fixed Vertical Rail Navigation */}
-            <DefenseNav />
-
-            {/* Main Console Viewport */}
+            <SidebarNav />
             <main className="main-viewport">
               <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/review" element={<ReviewGatePage />} />
-                <Route path="/operations" element={<OperationsDashboardPage />} />
-                <Route path="/requirements/r1" element={<R1AirGappedPage />} />
-                <Route path="/requirements/r2" element={<R2RouterPage />} />
-                <Route path="/requirements/r3" element={<R3ReActPage />} />
-                <Route path="/requirements/r4" element={<R4ToolsPage />} />
-                <Route path="/requirements/r5" element={<R5DeliverablesPage />} />
-                <Route path="/requirements/r6" element={<R6RAGPage />} />
-                <Route path="/requirements/r7" element={<R7NetworkProofPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/assistant" element={<AIAssistantPage />} />
+                <Route path="/router" element={<ModelRouterPage />} />
+                <Route path="/reasoning" element={<AgentReasoningPage />} />
+                <Route path="/tools" element={<ToolRegistryPage />} />
+                <Route path="/knowledge" element={<KnowledgeSearchPage />} />
+                <Route path="/deliverables" element={<DeliverablesPage />} />
+                <Route path="/air-gap" element={<AirGapMonitorPage />} />
+                <Route path="/operations" element={<ModelOperationsPage />} />
+                <Route path="/approvals" element={<ApprovalGatePage />} />
               </Routes>
-
-
               <Footer />
             </main>
           </div>

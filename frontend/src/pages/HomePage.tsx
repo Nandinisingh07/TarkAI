@@ -7,10 +7,8 @@ import {
   Wrench,
   FileCheck,
   Database,
-  ShieldAlert,
   Play,
   Activity,
-  Lock,
   Cpu,
   CheckCircle2,
   ArrowRight,
@@ -18,8 +16,15 @@ import {
 } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { fetchAirGapStatus, fetchReviewDrafts } from '../services/api';
+import { ImageSlideshow } from '../components/ImageSlideshow';
 
-export const LandingPage: React.FC = () => {
+const homeSlides = [
+  { src: '/images/home/home1.jpg', alt: 'MRPL / government infrastructure', caption: 'Sovereign On-Premise Agentic AI Workbench' },
+  { src: '/images/home/home2.jpg', alt: 'MRPL / government infrastructure' },
+  { src: '/images/home/home3.jpg', alt: 'MRPL / government infrastructure' },
+];
+
+export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { modelUsed, taskStatus, trace, resultData, deliverable } = useTaskContext();
   const [airGapData, setAirGapData] = useState<any>(null);
@@ -34,36 +39,35 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Page Header Strip */}
+      <ImageSlideshow slides={homeSlides} height="68vh" />
+
       <div className="page-header-strip">
         <div>
           <h1 className="page-title">
             System Overview
           </h1>
           <p className="page-subtitle">
-            National Confidential AI Operations Platform — Operational Readiness & Security Status
+            Sovereign On-Premise Agentic AI Workbench — Operational Readiness & Security Status
           </p>
         </div>
 
         <button
           className="btn-blue"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate('/assistant')}
         >
           <Play size={15} />
-          <span>Launch Mission Console</span>
+          <span>Open AI Assistant</span>
         </button>
       </div>
 
-      {/* Requirement 10: First Screen Key Answers Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
-        
-        {/* 1. Is System Secure? */}
+
         <div className="instrument-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
             <ShieldCheck size={20} color={isSecure ? '#34d399' : '#f87171'} />
             <div>
               <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                1. System Security
+                System Security
               </div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: isSecure ? '#34d399' : '#f87171' }}>
                 {isSecure ? 'AIR-GAP SECURE (0 Egress)' : 'Security Alert'}
@@ -75,13 +79,12 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* 2. Is AI Operational? */}
         <div className="instrument-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
             <Cpu size={20} color="#60a5fa" />
             <div>
               <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                2. AI Models Status
+                AI Models Status
               </div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#60a5fa' }}>
                 Operational & Loaded
@@ -93,13 +96,12 @@ export const LandingPage: React.FC = () => {
           </p>
         </div>
 
-        {/* 3. Human Approval Required? */}
-        <div className="instrument-card" onClick={() => navigate('/review')} style={{ cursor: 'pointer' }}>
+        <div className="instrument-card" onClick={() => navigate('/approvals')} style={{ cursor: 'pointer' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
             <FileCheck size={20} color={pendingReviews > 0 ? '#fbbf24' : '#34d399'} />
             <div>
               <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                3. Approval Gate Queue
+                Approval Gate Queue
               </div>
               <div style={{ fontSize: '15px', fontWeight: 700, color: pendingReviews > 0 ? '#fbbf24' : '#34d399' }}>
                 {pendingReviews > 0 ? `${pendingReviews} Drafts Awaiting Review` : 'No Pending Approvals'}
@@ -113,10 +115,8 @@ export const LandingPage: React.FC = () => {
 
       </div>
 
-      {/* Task & Recent Deliverables Summary */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-        
-        {/* Active Task Status */}
+
         <div className="instrument-card">
           <div className="card-header-bar">
             <div className="card-title">
@@ -144,13 +144,12 @@ export const LandingPage: React.FC = () => {
             )}
           </div>
 
-          <button className="btn-outline" onClick={() => navigate('/dashboard')} style={{ marginTop: '8px' }}>
-            <span>Go to Mission Console</span>
+          <button className="btn-outline" onClick={() => navigate('/assistant')} style={{ marginTop: '8px' }}>
+            <span>Go to AI Assistant</span>
             <ArrowRight size={14} />
           </button>
         </div>
 
-        {/* Deliverables Ready */}
         <div className="instrument-card">
           <div className="card-header-bar">
             <div className="card-title">
@@ -183,7 +182,6 @@ export const LandingPage: React.FC = () => {
 
       </div>
 
-      {/* System Modules Quick Nav Grid */}
       <div className="instrument-card">
         <div className="card-header-bar">
           <div className="card-title">
@@ -193,12 +191,12 @@ export const LandingPage: React.FC = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
           {[
-            { title: 'Air-Gap Security', path: '/requirements/r1', icon: ShieldCheck, desc: 'Local Socket Monitoring' },
-            { title: 'Model Router', path: '/requirements/r2', icon: Zap, desc: 'Auto Model Classifier' },
-            { title: 'Agentic Engine', path: '/requirements/r3', icon: GitCommit, desc: 'Multi-Step ReAct Loop' },
-            { title: 'Multimodal Tools', path: '/requirements/r4', icon: Wrench, desc: 'OCR, Vision & Sandboxes' },
-            { title: 'Deliverables', path: '/requirements/r5', icon: FileCheck, desc: '.docx, .pptx, .xlsx Factory' },
-            { title: 'Knowledge Base', path: '/requirements/r6', icon: Database, desc: 'IntelliMesh RAG SOPs' },
+            { title: 'Air-Gap & Network Monitor', path: '/air-gap', icon: ShieldCheck, desc: 'Local Socket Monitoring' },
+            { title: 'Model Router', path: '/router', icon: Zap, desc: 'Auto Model Classifier' },
+            { title: 'Agent Reasoning', path: '/reasoning', icon: GitCommit, desc: 'Multi-Step ReAct Loop' },
+            { title: 'Tool Registry', path: '/tools', icon: Wrench, desc: 'OCR, Vision & Sandboxes' },
+            { title: 'Deliverables', path: '/deliverables', icon: FileCheck, desc: '.docx, .pptx, .xlsx Factory' },
+            { title: 'Knowledge Search', path: '/knowledge', icon: Database, desc: 'Local SOP Retrieval' },
           ].map((m, idx) => {
             const IconComp = m.icon;
             return (

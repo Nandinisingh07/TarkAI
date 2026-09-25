@@ -1,9 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import { Zap, Code2, Cpu, Brain, Eye, Settings } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { ModelBadge } from '../components/ModelBadge';
 
-export const R2RouterPage: React.FC = () => {
+export const ModelRouterPage: React.FC = () => {
   const { modelUsed, routingReason } = useTaskContext();
 
   return (
@@ -12,10 +12,10 @@ export const R2RouterPage: React.FC = () => {
       <div className="hero-section">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Zap size={28} color="var(--accent-cyan)" />
-          <h2 className="hero-title">Multi-Model Intelligence & TaskRouter (Requirement R2)</h2>
+          <h2 className="hero-title">Multi-Model Intelligence & TaskRouter</h2>
         </div>
         <p className="hero-desc">
-          Satisfies PS26117 Requirement 2: Intelligent multi-model orchestration. Incoming task descriptions are dynamically classified up front by <code>router.py</code> to route specialized coding tasks to <code>qwen2.5-coder:1.5b</code> and general reasoning tasks to <code>phi3:mini</code>. Model names are dynamically loaded from <code>models.json</code>—zero hardcoded model names in agent code.
+          Intelligent multi-model orchestration. Incoming task descriptions are dynamically classified up front by <code>router.py</code> to route specialized coding tasks to <code>qwen2.5-coder:1.5b</code> and general reasoning tasks to <code>phi3:mini</code>. Model names are dynamically loaded from <code>models.json</code>—zero hardcoded model names in agent code.
         </p>
       </div>
 

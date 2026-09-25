@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { ShieldCheck, CheckCircle2, XCircle, AlertTriangle, FileText, Clock, UserCheck, Search, Filter } from 'lucide-react';
 import { fetchReviewDrafts, approveReviewDraft, rejectReviewDraft, getUserRole } from '../services/api';
 import { ReviewDraft } from '../types';
 
-export const ReviewGatePage: React.FC = () => {
+export const ApprovalGatePage: React.FC = () => {
   const [drafts, setDrafts] = useState<ReviewDraft[]>([]);
   const [selectedDraft, setSelectedDraft] = useState<ReviewDraft | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');

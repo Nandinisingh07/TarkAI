@@ -1,9 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import { FileCheck, Code2, FileText, Presentation, Table, Download, CheckCircle2 } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { ResultView } from '../components/ResultView';
 
-export const R5DeliverablesPage: React.FC = () => {
+export const DeliverablesPage: React.FC = () => {
   const { resultData, deliverable } = useTaskContext();
 
   return (
@@ -12,10 +12,10 @@ export const R5DeliverablesPage: React.FC = () => {
       <div className="hero-section">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <FileCheck size={28} color="var(--accent-cyan)" />
-          <h2 className="hero-title">Government Document Generation Workspace (Requirement R5)</h2>
+          <h2 className="hero-title">Government Document Generation Workspace</h2>
         </div>
         <p className="hero-desc">
-          Satisfies PS26117 Requirement 5: Professional deliverable document production workspace. Converts the agent's <code>FINAL_ANSWER</code> specifications into styled Word (<code>.docx</code>), PowerPoint (<code>.pptx</code>), and Excel (<code>.xlsx</code>) files saved in <code>outputs/</code> with direct download links.
+          Professional deliverable document production workspace. Converts the agent's <code>FINAL_ANSWER</code> specifications into styled Word (<code>.docx</code>), PowerPoint (<code>.pptx</code>), and Excel (<code>.xlsx</code>) files saved in <code>outputs/</code> with direct download links.
         </p>
       </div>
 

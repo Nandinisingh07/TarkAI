@@ -1,9 +1,9 @@
-import React from 'react';
+﻿import React from 'react';
 import { Layers, Code2, Terminal, CheckCircle2, Wrench, ArrowRight } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { AgentTraceView } from '../components/AgentTraceView';
 
-export const R3ReActPage: React.FC = () => {
+export const AgentReasoningPage: React.FC = () => {
   const { trace, currentStep, taskStatus } = useTaskContext();
 
   return (
@@ -12,10 +12,10 @@ export const R3ReActPage: React.FC = () => {
       <div className="hero-section">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Layers size={28} color="var(--accent-blue)" />
-          <h2 className="hero-title">Agentic ReAct AI Engine (Requirement R3)</h2>
+          <h2 className="hero-title">Agentic ReAct AI Engine</h2>
         </div>
         <p className="hero-desc">
-          Satisfies PS26117 Requirement 3: ReAct-style agentic reasoning framework (<code>{"Thought -> Action -> Action Input -> Observation"}</code>) capped at 8 steps. The agent dynamically parses structured JSON tool parameters, receives tool execution outputs back into its reasoning context, and self-corrects until generating a <code>FINAL_ANSWER</code> action.
+          ReAct-style agentic reasoning framework (<code>{"Thought -> Action -> Action Input -> Observation"}</code>) capped at 8 steps. The agent dynamically parses structured JSON tool parameters, receives tool execution outputs back into its reasoning context, and self-corrects until generating a <code>FINAL_ANSWER</code> action.
         </p>
       </div>
 

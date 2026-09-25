@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Terminal, ShieldCheck, Plus } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { TaskForm } from '../components/TaskForm';
@@ -6,7 +6,7 @@ import { ModelBadge } from '../components/ModelBadge';
 import { AgentTraceView } from '../components/AgentTraceView';
 import { ResultView } from '../components/ResultView';
 import { CitationGraph } from '../components/CitationGraph';
-export const DashboardPage: React.FC = () => {
+export const AIAssistantPage: React.FC = () => {
   const {
     modelUsed,
     routingReason,

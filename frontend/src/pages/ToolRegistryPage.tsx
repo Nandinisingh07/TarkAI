@@ -1,7 +1,7 @@
-import React from 'react';
+﻿import React from 'react';
 import { Eye, Code2, Folder, Terminal, HardDrive, FileText, CheckCircle2, FileCheck } from 'lucide-react';
 
-export const R4ToolsPage: React.FC = () => {
+export const ToolRegistryPage: React.FC = () => {
   const toolsList = [
     {
       name: 'file_io',
@@ -59,10 +59,10 @@ export const R4ToolsPage: React.FC = () => {
       <div className="hero-section">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
           <Eye size={28} color="var(--accent-cyan)" />
-          <h2 className="hero-title">Multimodal AI & 6-Tool Modular Suite (Requirement R4)</h2>
+          <h2 className="hero-title">Multimodal AI & 6-Tool Modular Suite</h2>
         </div>
         <p className="hero-desc">
-          Satisfies PS26117 Requirement 4: Comprehensive suite of 6 air-gapped industrial tools. Includes multimodal vision inspection via <code>moondream</code>, OCR text extraction via Tesseract/pypdf for scanned engineering documents, and sandboxed code execution.
+          Comprehensive suite of 6 air-gapped industrial tools. Includes multimodal vision inspection via <code>moondream</code>, OCR text extraction via Tesseract/pypdf for scanned engineering documents, and sandboxed code execution.
         </p>
       </div>
 
