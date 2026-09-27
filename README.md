@@ -1,82 +1,143 @@
-# Sovereign On-Premise Agentic AI Workbench (SIH PS26117)
+# TarkAI
 
-> **Phase 1 Implementation**: Fully air-gapped, CPU-optimized, confidential industrial agentic workbench powered by open-weight multimodal LLMs via Ollama.
+**A Sovereign, Air-Gapped, On-Premise Agentic AI Workbench**
 
----
-
-## 🛡️ Key Features & Hard Requirement Fulfillment
-
-1. **AIR-GAPPED AUDIT LOGGING**: Zero external API or network calls. Features a background `NetworkMonitor` service (`psutil.net_connections()`) that continuously audits connections to `network_audit.log` and exposes `GET /monitor/status`.
-2. **MULTI-MODEL AUTO-SELECTION**: Rule-based `TaskRouter` module (`backend/app/router.py`) auto-classifies user prompts. Routes coding tasks to `qwen2.5-coder:1.5b` and general industrial/reasoning tasks to `phi3:mini`. Model names are fully dynamic in `backend/app/config/models.json`—zero code changes required to add/swap models.
-3. **ReAct AGENTIC LOOP**: Multi-step ReAct agent engine (`backend/app/agent.py`) supporting up to 8 iterations of `Thought -> Action -> Observation -> Final Answer`.
-4. **MODULAR TOOL REGISTRY**:
-   - `file_io.py`: Sandboxed file read/write operations within `data/sandbox/`.
-   - `code_sandbox.py`: Subprocess code execution with 10s timeout in isolated temp environment.
-   - `doc_search.py`: IntelliMesh RAG pipeline (BM25 + TF-IDF Vector Space + RRF + MMR) over local SOPs with source citations.
-   - `ocr_tool.py`: Text extraction for scanned PDFs and industrial documents.
-   - `vision_tool.py`: Multimodal image description via `moondream`.
-5. **DELIVERABLE GENERATION**: Generates downloadable industrial documents (`.docx`, `.pptx`, `.xlsx`, `.txt`) using `python-docx`, `python-pptx`, and `openpyxl`.
-6. **KNOWLEDGE BASE GROUNDING**: Grounded responses based on local SOPs in `data/knowledge_base/` with inline citations.
-7. **AIR-GAP GUARD PANEL**: React UI panel polling `/monitor/status` every 3 seconds with active green shield and live audit logs.
+Built for **PS26117** — Mangalore Refinery and Petrochemicals Limited (MRPL), Smart India Hackathon 2026
 
 ---
 
-## 💻 Hardware Requirements
+## Problem Statement
 
-- **CPU**: Standard x86_64 / ARM CPU (no GPU required for Phase 1).
-- **RAM**: Minimum 8 GB RAM (16 GB recommended).
-- **Disk Space**: ~6 GB free space (for Ollama lightweight models `qwen2.5-coder:1.5b`, `phi3:mini`, and `moondream`).
+Refineries, PSUs, and defence-linked manufacturing units generate large volumes of sensitive knowledge work — approval notes, engineering calculations, scanned drawings, inspection reports — that cannot be processed by cloud AI tools like Claude or Codex due to confidentiality constraints. PS26117 calls for a **self-hosted, air-gapped AI workbench** that:
 
----
-
-## 🚀 Quick Start with Docker Compose
-
-1. **Clone & Launch**:
-   ```bash
-   docker-compose up --build
-   ```
-2. **Access Web Application**:
-   - **Frontend UI**: [http://localhost:3000](http://localhost:3000) (or `http://localhost:5173`)
-   - **Backend API**: [http://localhost:8000/docs](http://localhost:8000/docs)
-   - **Air-Gap Monitor Status**: [http://localhost:8000/monitor/status](http://localhost:8000/monitor/status)
+- Runs entirely on the organization's own infrastructure, with zero external calls
+- Supports multiple open-weight models and automatically selects the right one per task
+- Allows new models to be added later **without redesigning the system**
+- Acts as a genuine agent — planning, using tools, and iterating on multi-step work
+- Handles multimodal input (scanned PDFs, handwriting, engineering drawings)
+- Produces real deliverables (Word/Excel/PPT, working code), not just chat replies
+- Grounds itself in the organization's own SOPs and documents
+- **Proves** — via logs or a live network monitor — that no external calls are made
 
 ---
 
-## ⚡ Local Development (Without Docker)
+## What TarkAI Does
 
-### Backend:
+TarkAI is a self-hosted agentic AI workbench designed to meet every requirement above.
+
+- **Secure, Air-Gapped AI** — Runs fully on-premise with zero external calls, keeping sensitive data protected and verifiably inside the organization.
+- **Intelligent Model Routing** — Automatically selects the most suitable local AI model for each task, such as coding or reasoning.
+- **ReAct-Based Task Automation** — Uses Reason → Act → Observation loops to plan, execute, observe, and refine multi-step tasks until completion.
+- **Multimodal & Organization-Grounded** — Processes text, scans, handwriting, and drawings using the organization's own internal knowledge.
+- **From Task to Deliverable** — Generates ready-to-use reports, documents, PPTs, spreadsheets, and working code from user tasks.
+- **Verifiable Security & Deployment** — A live network monitor visibly proves that no data leaves the system, with one-command on-premise deployment.
+
+---
+
+## Architecture
+
+User → React frontend → Task Router (rule-based + LLM fallback) → ReAct Agent (Thought → Action → Observation) → local tools (file I/O, code sandbox, spreadsheet, OCR, knowledge-base search) → local Ollama models → deliverable generation (docx/pptx/xlsx/code), all logged and verified by a live network monitor.
+
+Full component diagram: see `/docs/architecture.puml` (PlantUML source in this repo).
+
+---
+
+## Tech Stack
+
+### Currently Implemented (CPU-only, verified from source)
+
+| Component | Model / Tool |
+|---|---|
+| Reasoning / General | `phi3:mini` |
+| Coding | `qwen2.5-coder:1.5b` |
+| Vision | `qwen3-vl:4b` |
+| Task Router | Stage 1: rule-based keyword/file-type match · Stage 2: `phi3:mini` (LLM tie-breaker) |
+| Embedding | `qwen3-embedding:0.6b` (~1.2GB, CPU-viable) |
+| Retrieval | Hybrid — BM25 + Dense Vector Search + Reciprocal Rank Fusion |
+| Vector Store | ChromaDB (persistent) |
+| OCR | PaddleOCR |
+| Drawing / Symbol Detection | RF-DETR (fine-tuned) |
+| Document Generation | python-docx, python-pptx, openpyxl |
+| Backend | FastAPI + Uvicorn |
+| Frontend | React + Vite |
+| Model Serving | Ollama (local inference) |
+| Deployment | Docker Compose |
+| Security | psutil-based live network monitor |
+
+### Production Target (Mid-Range GPU, per PS26117's own spec)
+
+Only the reasoning, coding, and vision models change — everything else in the stack above is unchanged.
+
+| Component | CPU (Demo) | Mid-Range GPU (Target) |
+|---|---|---|
+| Reasoning / Agent | phi3:mini | Qwen3.6-27B (~17GB VRAM, Q4) |
+| Coding | qwen2.5-coder:1.5b | qwen3-coder:30b (~19GB VRAM, Q4) |
+| Vision | qwen3-vl:4b | Qwen3-VL-8B (~6GB VRAM, Q4) |
+
+**Extendable by design:** switching tiers is a 2–3 line change in `.env` / `models.json`. No code touch — directly satisfying PS26117's requirement that new models be addable without redesigning the system.
+
+---
+
+## RAG & Grounding Pipeline (code-verified)
+
+1. **Ingestion** — `.txt`, `.pdf`, `.docx`, `.xlsx`, and image files parsed from the local knowledge base
+2. **Chunking** — 400-word windows, 80-word overlap
+3. **Embedding** — each chunk encoded via `qwen3-embedding:0.6b`, called through Ollama's `/api/embeddings` endpoint
+4. **Storage** — embeddings upserted into a persistent ChromaDB collection (cosine HNSW index)
+5. **Retrieval** — hybrid search: BM25 (keyword) + dense vector search, merged via Reciprocal Rank Fusion
+6. **Grounded response** — retrieved passages are injected into the agent's prompt history as tool observations, and the model answers only from retrieved context, citing the source
+
+This pipeline was traced end-to-end against the live source (`rag_pipeline.py`, `orchestrator.py`) — every step is implemented, with no stubs or placeholders.
+
+---
+
+## Security — Verifiable, Not Claimed
+
+Per PS26117: *"show, through logs or a visible network monitor, that no external calls are made at any point — that's the actual proof of the sovereign claim, not just a statement of it."*
+
+TarkAI includes a live network monitor that:
+- Polls active sockets via `psutil.net_connections()` every 3 seconds
+- Classifies every connection as local/private vs. external
+- Logs every check — a warning line is written immediately if any external call is ever detected
+- Enforcement is architectural: no external SDKs exist in the codebase, and Ollama only ever calls `localhost`
+
+---
+
+## Getting Started
+
 ```bash
-cd backend
-python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On Linux/Mac:
-source venv/bin/activate
-
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
+git clone <repo-url>
+cd tarkai
+docker-compose up
 ```
 
-### Frontend:
-```bash
-cd frontend
-npm install
-npm run dev
-```
+This starts the FastAPI backend, React frontend, and Ollama model server together. See `cpu_tier.env` for the default CPU-only model configuration.
 
 ---
 
-## 🔄 Phase 2 GPU Upgrade Guide (Zero Code Changes)
+## Demo Scenario
 
-To upgrade the workbench for Phase 2 GPU deployment or swap to larger models (e.g. `qwen2.5-coder:7b`, `llama3.1:8b`, `llava:7b`), simply update `backend/app/config/models.json` or `.env`:
+1. Live air-gap network monitor running throughout
+2. End-to-end agentic task: OCR a scanned inspection report → cross-check against SOPs via RAG → draft a Word approval note
+3. Router classification shown live for multiple task types
+4. RAG question with citations, plus one deliberate negative test (question outside the knowledge base)
+5. Coding task, executed and verified in a sandbox
+6. Multimodal task → auto-generated PowerPoint briefing
 
-```json
-{
-  "coder_model": "qwen2.5-coder:7b",
-  "general_model": "llama3.1:8b",
-  "vision_model": "llava:7b",
-  "ollama_base_url": "http://localhost:11434"
-}
-```
+---
 
-No code modifications are required in `agent.py`, `router.py`, or tool modules.
+## Roadmap
+
+The following are **planned extensions, not yet implemented** in the current codebase:
+
+- **Knowledge Graph with Citations** — linking related SOPs, drawings, and records into a traceable graph for richer grounding
+- **Voice Integration** — hands-free interaction via voice commands and spoken responses
+- **Multilingual Support** — native support for Hindi and other regional languages alongside English
+- **Multiple Consoles** — parallel chat sessions/tabs so a user can run independent tasks side by side
+
+---
+
+## Team & Repository
+
+- Problem Statement: PS26117 — MRPL, Smart India Hackathon 2026
+- GitHub: `<repo-link>`
