@@ -1,0 +1,564 @@
+﻿/* ============================================================
+   TARKAI R4 — MULTIMODAL INTELLIGENCE / TOOL CENTER
+   UI REDESIGN ONLY
+   ============================================================ */
+
+.r4-redesign {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #17384d;
+}
+
+/* Remove excessive spacing inherited from old page */
+
+.r4-redesign > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.r4-redesign .instrument-card {
+  margin: 0 !important;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.r4-redesign .page-header-strip {
+  position: relative;
+  overflow: hidden;
+  min-height: 165px;
+  padding: 26px 30px !important;
+  margin: 0 !important;
+  border: 1px solid #d4e2e9;
+  border-radius: 15px;
+  background:
+    radial-gradient(circle at 90% 30%, rgba(8,127,140,.10), transparent 25%),
+    linear-gradient(135deg,#ffffff,#f4f9fc 65%,#edf8f3);
+  box-shadow: 0 8px 26px rgba(20,55,80,.07);
+}
+
+.r4-redesign .page-header-strip::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(
+    180deg,
+    #1261a0,
+    #087f8c,
+    #138a4b
+  );
+}
+
+.r4-redesign .page-header-strip::after {
+  content: "R4";
+  position: absolute;
+  right: 28px;
+  top: 16px;
+  color: rgba(18,97,160,.055);
+  font-size: 100px;
+  line-height: 1;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.r4-redesign .page-title {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 !important;
+  color: #12364d;
+  font-size: 25px !important;
+  line-height: 1.2;
+  font-weight: 850;
+}
+
+.r4-redesign .page-subtitle {
+  position: relative;
+  z-index: 2;
+  max-width: 850px;
+  margin: 8px 0 0 !important;
+  color: #607787;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   ALL OLD GRID SPACING
+   ============================================================ */
+
+.r4-redesign [style*="gap: 24px"],
+.r4-redesign [style*="gap:24px"] {
+  gap: 12px !important;
+}
+
+.r4-redesign [style*="gap: 20px"],
+.r4-redesign [style*="gap:20px"] {
+  gap: 12px !important;
+}
+
+.r4-redesign [style*="padding: 24px"],
+.r4-redesign [style*="padding:24px"] {
+  padding: 14px !important;
+}
+
+.r4-redesign [style*="padding: 20px"],
+.r4-redesign [style*="padding:20px"] {
+  padding: 13px !important;
+}
+
+/* ============================================================
+   SECTION HEADERS
+   ============================================================ */
+
+.r4-redesign .card-header-bar {
+  min-height: 46px !important;
+  padding: 11px 15px !important;
+  border-bottom: 1px solid #e1eaf0;
+  background: linear-gradient(90deg,#f7fbfd,#ffffff);
+}
+
+.r4-redesign .card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #173c55;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+/* ============================================================
+   TOOL / CAPABILITY CARDS
+   ============================================================ */
+
+.r4-redesign .instrument-card {
+  border: 1px solid #d6e2e9 !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 18px rgba(20,55,80,.055) !important;
+  overflow: hidden;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+
+.r4-redesign .instrument-card:hover {
+  transform: translateY(-2px);
+  border-color: #b8d3e1 !important;
+  box-shadow: 0 11px 26px rgba(20,55,80,.10) !important;
+}
+
+/* ============================================================
+   TOOL GRID
+   ============================================================ */
+
+.r4-redesign .tool-grid,
+.r4-redesign .tools-grid,
+.r4-redesign .r4-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px !important;
+  margin: 0 !important;
+}
+
+.r4-redesign .tool-card,
+.r4-redesign .r4-tool-card {
+  position: relative;
+  min-height: 145px;
+  padding: 16px !important;
+  border: 1px solid #d8e3e9;
+  border-radius: 11px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(20,55,80,.045);
+  transition: .2s ease;
+}
+
+.r4-redesign .tool-card:hover,
+.r4-redesign .r4-tool-card:hover {
+  transform: translateY(-3px);
+  border-color: #a9cddd;
+  box-shadow: 0 12px 25px rgba(20,55,80,.09);
+}
+
+.r4-redesign .tool-card h3,
+.r4-redesign .r4-tool-card h3 {
+  margin: 8px 0 4px !important;
+  color: #183c55;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.r4-redesign .tool-card p,
+.r4-redesign .r4-tool-card p {
+  margin: 0 !important;
+  color: #6b7f8d;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   TOOL ICON
+   ============================================================ */
+
+.r4-redesign .tool-icon,
+.r4-redesign .r4-tool-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #eaf3f9;
+  color: #1261a0;
+}
+
+.r4-redesign .tool-card:nth-child(2) .tool-icon,
+.r4-redesign .r4-tool-card:nth-child(2) .r4-tool-icon {
+  background: #e9f8f7;
+  color: #087f8c;
+}
+
+.r4-redesign .tool-card:nth-child(3) .tool-icon,
+.r4-redesign .r4-tool-card:nth-child(3) .r4-tool-icon {
+  background: #edf9f2;
+  color: #138a4b;
+}
+
+/* ============================================================
+   PIPELINE / PROCESS
+   ============================================================ */
+
+.r4-redesign .r4-pipeline,
+.r4-redesign .tool-pipeline,
+.r4-redesign .processing-pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px !important;
+  align-items: stretch;
+  margin: 0 !important;
+}
+
+.r4-redesign .pipeline-step {
+  position: relative;
+  min-height: 105px;
+  padding: 13px !important;
+  border: 1px solid #d7e3e9;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(20,55,80,.045);
+}
+
+.r4-redesign .pipeline-step::after {
+  content: "›";
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  z-index: 3;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 19px;
+  height: 19px;
+  border: 1px solid #d8e4ea;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1261a0;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.r4-redesign .pipeline-step:last-child::after {
+  display: none;
+}
+
+.r4-redesign .pipeline-number {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  margin-bottom: 8px;
+  border-radius: 7px;
+  background: #eaf3f9;
+  color: #1261a0;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.r4-redesign .pipeline-step h3 {
+  margin: 0 !important;
+  color: #1b4058;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.r4-redesign .pipeline-step p {
+  margin: 4px 0 0 !important;
+  color: #728592;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+/* ============================================================
+   EXECUTION / OUTPUT AREA
+   ============================================================ */
+
+.r4-redesign .execution-panel,
+.r4-redesign .tool-output,
+.r4-redesign .analysis-panel,
+.r4-redesign .result-panel {
+  border: 1px solid #d5e1e8;
+  border-radius: 11px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.r4-redesign .execution-header,
+.r4-redesign .output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 43px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2eaf0;
+  background: #f8fbfd;
+}
+
+.r4-redesign .execution-body,
+.r4-redesign .output-body {
+  padding: 13px !important;
+}
+
+/* ============================================================
+   IMAGE / OCR PREVIEW
+   ============================================================ */
+
+.r4-redesign img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.r4-redesign .image-preview,
+.r4-redesign .vision-preview {
+  overflow: hidden;
+  border: 1px solid #d7e3e9;
+  border-radius: 9px;
+  background: #f5f8fa;
+}
+
+.r4-redesign .image-preview img,
+.r4-redesign .vision-preview img {
+  display: block;
+  width: 100%;
+  max-height: 330px;
+  object-fit: contain;
+}
+
+/* ============================================================
+   STATUS / BADGES
+   ============================================================ */
+
+.r4-redesign .status-badge {
+  border-radius: 7px !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+}
+
+.r4-redesign .status-badge.nominal {
+  background: #edf9f2 !important;
+  border-color: #b8dec8 !important;
+  color: #177346 !important;
+}
+
+/* ============================================================
+   CODE / RAW OUTPUT
+   ============================================================ */
+
+.r4-redesign pre {
+  margin: 7px 0 0 !important;
+  padding: 11px 13px !important;
+  overflow-x: auto;
+  border: 1px solid #dce6ec;
+  border-radius: 8px;
+  background: #f5f8fa !important;
+  color: #2d5268 !important;
+  font-size: 10px !important;
+  line-height: 1.55 !important;
+}
+
+.r4-redesign code {
+  color: #1261a0;
+  background: #eef5fa;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+/* ============================================================
+   STATUS GRID
+   ============================================================ */
+
+.r4-redesign .r4-status-grid,
+.r4-redesign .tool-status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px !important;
+}
+
+.r4-redesign .r4-status-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px !important;
+  border: 1px solid #d9e4ea;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.r4-redesign .r4-status-card strong {
+  display: block;
+  color: #24465b;
+  font-size: 11px;
+}
+
+.r4-redesign .r4-status-card span {
+  display: block;
+  margin-top: 2px;
+  color: #7a8c97;
+  font-size: 8px;
+}
+
+/* ============================================================
+   SECURITY STRIP
+   ============================================================ */
+
+.r4-redesign .r4-security {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 18px !important;
+  border: 1px solid #c8dfd3;
+  border-radius: 11px;
+  background: linear-gradient(135deg,#f1faf5,#f8fcfa);
+}
+
+.r4-redesign .r4-security h3 {
+  margin: 0 0 4px !important;
+  color: #1b4937;
+  font-size: 14px;
+}
+
+.r4-redesign .r4-security p {
+  margin: 0 !important;
+  max-width: 700px;
+  color: #648073;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.r4-redesign .r4-security-points {
+  display: flex;
+  gap: 12px;
+  color: #287052;
+  font-size: 9px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.r4-redesign button {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.r4-redesign button:hover {
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   REMOVE GIANT EMPTY AREAS
+   ============================================================ */
+
+.r4-redesign [style*="min-height"] {
+  max-height: 500px;
+}
+
+.r4-redesign .empty-state,
+.r4-redesign .standby-row {
+  min-height: 90px !important;
+  padding: 20px !important;
+}
+
+.r4-redesign .standby-row {
+  display: flex;
+  align-items: center;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+  .r4-redesign .tool-grid,
+  .r4-redesign .tools-grid,
+  .r4-redesign .r4-tool-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .r4-redesign .r4-status-grid,
+  .r4-redesign .tool-status-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .r4-redesign .r4-pipeline,
+  .r4-redesign .tool-pipeline,
+  .r4-redesign .processing-pipeline {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .r4-redesign {
+    gap: 13px !important;
+  }
+
+  .r4-redesign .page-header-strip {
+    min-height: auto;
+    padding: 20px !important;
+  }
+
+  .r4-redesign .tool-grid,
+  .r4-redesign .tools-grid,
+  .r4-redesign .r4-tool-grid,
+  .r4-redesign .r4-status-grid,
+  .r4-redesign .tool-status-grid,
+  .r4-redesign .r4-pipeline,
+  .r4-redesign .tool-pipeline,
+  .r4-redesign .processing-pipeline {
+    grid-template-columns: 1fr;
+  }
+
+  .r4-redesign .pipeline-step::after {
+    display: none;
+  }
+
+  .r4-redesign .r4-security {
+    grid-template-columns: 1fr;
+  }
+
+  .r4-redesign .r4-security-points {
+    flex-wrap: wrap;
+    white-space: normal;
+  }
+}

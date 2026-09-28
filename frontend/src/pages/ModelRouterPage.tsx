@@ -1,116 +1,364 @@
-﻿import React from 'react';
-import { Zap, Code2, Cpu, Brain, Eye, Settings } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  Zap,
+  Code2,
+  Brain,
+  Eye,
+  ArrowRight,
+  ShieldCheck,
+  Activity,
+  Cpu,
+  CheckCircle2,
+  ChevronRight,
+  Network,
+  LockKeyhole,
+  Database
+} from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { ModelBadge } from '../components/ModelBadge';
+import '../styles/model-router.css';
+
+const stages = [
+  {
+    number: '01',
+    label: 'INPUT',
+    title: 'Task Ingestion',
+    desc: 'Natural-language request enters the local routing engine.',
+    icon: Database,
+    tone: 'blue'
+  },
+  {
+    number: '02',
+    label: 'CLASSIFY',
+    title: 'Task Classification',
+    desc: 'Keywords and task type determine the required capability.',
+    icon: Network,
+    tone: 'cyan'
+  },
+  {
+    number: '03',
+    label: 'SELECT',
+    title: 'Model Selection',
+    desc: 'Configuration maps the task to the appropriate local model.',
+    icon: Cpu,
+    tone: 'green'
+  },
+  {
+    number: '04',
+    label: 'DISPATCH',
+    title: 'Local Inference',
+    desc: 'Prompt is dispatched to Ollama on the local machine.',
+    icon: Zap,
+    tone: 'amber'
+  }
+];
+
+const models = [
+  {
+    icon: Code2,
+    name: 'qwen2.5-coder:1.5b',
+    type: 'CODING',
+    status: 'READY',
+    tone: 'blue',
+    desc: 'Python generation, debugging, calculations and code execution.',
+    capabilities: ['Python', 'Debugging', 'Code']
+  },
+  {
+    icon: Brain,
+    name: 'phi3:mini',
+    type: 'GENERAL REASONING',
+    status: 'READY',
+    tone: 'green',
+    desc: 'SOP analysis, reasoning, summaries and operational documents.',
+    capabilities: ['SOP', 'Reasoning', 'Text']
+  },
+  {
+    icon: Eye,
+    name: 'moondream',
+    type: 'VISION',
+    status: 'READY',
+    tone: 'amber',
+    desc: 'Local visual understanding of equipment images and diagrams.',
+    capabilities: ['Images', 'OCR', 'Vision']
+  }
+];
 
 export const ModelRouterPage: React.FC = () => {
   const { modelUsed, routingReason } = useTaskContext();
+  const [activeStage, setActiveStage] = useState(0);
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+
+  const currentModel = selectedModel || modelUsed;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-      {/* Hero Header */}
-      <div className="hero-section">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <Zap size={28} color="var(--accent-cyan)" />
-          <h2 className="hero-title">Multi-Model Intelligence & TaskRouter</h2>
-        </div>
-        <p className="hero-desc">
-          Intelligent multi-model orchestration. Incoming task descriptions are dynamically classified up front by <code>router.py</code> to route specialized coding tasks to <code>qwen2.5-coder:1.5b</code> and general reasoning tasks to <code>phi3:mini</code>. Model names are dynamically loaded from <code>models.json</code>—zero hardcoded model names in agent code.
-        </p>
-      </div>
+    <div className="tarkai-router-page">
 
-      {/* Model Selection Flow Visualization */}
-      <div className="card">
-        <div className="card-title">
-          <span>Task Classification & Router Pipeline</span>
-        </div>
+      {/* HERO */}
+      <section className="router-hero">
+        <div className="router-hero-grid">
+          <div className="router-hero-copy">
+            <div className="router-eyebrow">
+              <span className="live-dot" />
+              R2 · INTELLIGENT MODEL ROUTER
+            </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', marginBottom: '0.3rem' }}>STAGE 1: INPUT INGESTION</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Task Description</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>User prompt evaluated for code syntax patterns or technical SOP keywords.</p>
+            <h1>
+              The right model.
+              <span> For every mission.</span>
+            </h1>
+
+            <p>
+              TarkAI classifies each operational request and dispatches it
+              to the appropriate local model without sending confidential
+              data outside the environment.
+            </p>
+
+            <div className="router-hero-actions">
+              <div className="hero-status">
+                <ShieldCheck size={17} />
+                <span>AIR-GAPPED ROUTING</span>
+              </div>
+
+              <div className="hero-status">
+                <LockKeyhole size={16} />
+                <span>LOCAL INFERENCE</span>
+              </div>
+            </div>
           </div>
 
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-blue)', marginBottom: '0.3rem' }}>STAGE 2: RULE CLASSIFIER</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>TaskRouter Regex Engine</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Matches terms like <code>def</code>, <code>script</code>, <code>python</code>, <code>bug</code>, <code>sql</code> vs SOP general terms.</p>
-          </div>
+          <div className="router-command-card">
+            <div className="command-top">
+              <div>
+                <span className="command-kicker">ROUTER STATUS</span>
+                <strong>OPERATIONAL</strong>
+              </div>
+              <div className="command-pulse">
+                <span />
+                LIVE
+              </div>
+            </div>
 
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', marginBottom: '0.3rem' }}>STAGE 3: CONFIG LOOKUP</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>models.json Specs</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Fetches exact model tags from configuration without touching code.</p>
-          </div>
+            <div className="command-stat">
+              <span>Active Models</span>
+              <strong>03</strong>
+            </div>
 
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', marginBottom: '0.3rem' }}>STAGE 4: INFERENCE DISPATCH</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Ollama Execution</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Dispatches prompt to selected model endpoint on localhost.</p>
+            <div className="command-stat">
+              <span>External Calls</span>
+              <strong>00</strong>
+            </div>
+
+            <div className="command-stat">
+              <span>Inference Location</span>
+              <strong>LOCAL</strong>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Available Models Breakdown */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
-        <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Zap size={20} color="var(--accent-cyan)" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>qwen2.5-coder:1.5b</h3>
+      {/* PIPELINE */}
+      <section className="router-section">
+        <div className="section-heading">
+          <div>
+            <span className="section-number">ROUTING PIPELINE</span>
+            <h2>How TarkAI decides</h2>
+            <p>Follow the request from input to local model inference.</p>
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            Optimized lightweight open-weight model specialized for Python script generation, syntax debugging, matrix calculations, and code sandbox execution.
-          </p>
-        </div>
 
-        <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Brain size={20} color="var(--accent-blue)" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>phi3:mini</h3>
+          <div className="pipeline-live">
+            <Activity size={15} />
+            ROUTER ENGINE LIVE
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            High-efficiency general reasoning model tailored for industrial SOP synthesis, safety checklist drafting, and deliverable document generation.
-          </p>
         </div>
 
-        <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Eye size={20} color="var(--accent-amber)" />
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>moondream</h3>
+        <div className="router-pipeline">
+          {stages.map((stage, index) => {
+            const Icon = stage.icon;
+            const active = activeStage === index;
+
+            return (
+              <React.Fragment key={stage.number}>
+                <button
+                  type="button"
+                  className={`pipeline-node ${active ? 'active' : ''} tone-${stage.tone}`}
+                  onClick={() => setActiveStage(index)}
+                >
+                  <div className="pipeline-node-top">
+                    <span>{stage.number}</span>
+                    <Icon size={19} />
+                  </div>
+
+                  <div className="pipeline-label">{stage.label}</div>
+                  <h3>{stage.title}</h3>
+                  <p>{stage.desc}</p>
+
+                  <div className="pipeline-more">
+                    VIEW STAGE <ChevronRight size={13} />
+                  </div>
+                </button>
+
+                {index < stages.length - 1 && (
+                  <div className="pipeline-arrow">
+                    <ArrowRight size={19} />
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        <div className="stage-detail">
+          <div className="stage-detail-icon">
+            {React.createElement(stages[activeStage].icon, { size: 22 })}
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            Ultra-lightweight multimodal vision model for describing industrial technical diagrams, equipment photos, and scanned engineering schematics.
-          </p>
-        </div>
-      </div>
 
-      {/* Technical Implementation Reference */}
-      <div className="card">
-        <div className="card-title">
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Code2 size={18} color="var(--accent-cyan)" /> Technical Implementation Reference
-          </span>
-          <span className="badge badge-secure">R2 VERIFIED LIVE</span>
-        </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-          <div>📁 <strong>Router Module:</strong> <code>backend/app/router.py</code></div>
-          <div>⚙️ <strong>Configuration File:</strong> <code>backend/app/config/models.json</code></div>
-          <div>⚡ <strong>Coder Model:</strong> <code>qwen2.5-coder:1.5b</code></div>
-          <div>🧠 <strong>General Model:</strong> <code>phi3:mini</code></div>
-          <div>👁️ <strong>Vision Model:</strong> <code>moondream</code></div>
-        </div>
-      </div>
-
-      {/* Embedded Live Component */}
-      {modelUsed && (
-        <div className="card">
-          <div className="card-title">
-            <span>Embedded Live R2 Model Routing Component</span>
+          <div>
+            <span>ACTIVE PIPELINE STAGE · {stages[activeStage].number}</span>
+            <strong>{stages[activeStage].title}</strong>
+            <p>{stages[activeStage].desc}</p>
           </div>
-          <ModelBadge modelName={modelUsed} reason={routingReason} />
+
+          <div className="stage-progress">
+            {stages.map((_, i) => (
+              <span key={i} className={i <= activeStage ? 'filled' : ''} />
+            ))}
+          </div>
         </div>
-      )}
+      </section>
+
+      {/* MODEL FLEET */}
+      <section className="router-section">
+        <div className="section-heading">
+          <div>
+            <span className="section-number">LOCAL MODEL FLEET</span>
+            <h2>Mission-ready intelligence</h2>
+            <p>Each model has a defined operational role inside TarkAI.</p>
+          </div>
+        </div>
+
+        <div className="model-fleet">
+          {models.map((model) => {
+            const Icon = model.icon;
+            const active = currentModel === model.name;
+
+            return (
+              <button
+                type="button"
+                key={model.name}
+                className={`model-card tone-${model.tone} ${active ? 'selected' : ''}`}
+                onClick={() => setSelectedModel(model.name)}
+              >
+                <div className="model-card-glow" />
+
+                <div className="model-card-header">
+                  <div className="model-icon">
+                    <Icon size={23} />
+                  </div>
+
+                  <div className="model-status">
+                    <span />
+                    {model.status}
+                  </div>
+                </div>
+
+                <div className="model-type">{model.type}</div>
+
+                <h3>{model.name}</h3>
+
+                <p>{model.desc}</p>
+
+                <div className="capability-row">
+                  {model.capabilities.map((cap) => (
+                    <span key={cap}>{cap}</span>
+                  ))}
+                </div>
+
+                <div className="model-card-footer">
+                  <span>{active ? 'ACTIVE ROUTE' : 'LOCAL MODEL'}</span>
+                  <ChevronRight size={16} />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* LIVE ROUTING RESULT */}
+      <section className="live-routing-panel">
+        <div className="live-routing-header">
+          <div>
+            <span className="section-number">LIVE ROUTING DECISION</span>
+            <h2>Current dispatch</h2>
+          </div>
+
+          <div className="verified-pill">
+            <CheckCircle2 size={15} />
+            LOCAL POLICY VERIFIED
+          </div>
+        </div>
+
+        {modelUsed ? (
+          <div className="routing-result-content">
+            <div className="route-source">
+              <span>REQUEST</span>
+              <strong>Operational Task</strong>
+            </div>
+
+            <ArrowRight className="route-result-arrow" size={24} />
+
+            <div className="route-model">
+              <span>SELECTED MODEL</span>
+              <ModelBadge
+                modelName={modelUsed}
+                reason={routingReason}
+              />
+            </div>
+
+            <div className="route-reason">
+              <span>ROUTING REASON</span>
+              <strong>{routingReason || 'Policy-based local model selection'}</strong>
+            </div>
+          </div>
+        ) : (
+          <div className="no-route-state">
+            <div className="no-route-icon">
+              <Zap size={24} />
+            </div>
+            <div>
+              <strong>Router standing by</strong>
+              <p>
+                Submit a task from the Mission Console to see the live
+                model-selection decision here.
+              </p>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* TECHNICAL TRUST */}
+      <section className="router-trust-grid">
+        <div className="trust-card">
+          <div className="trust-icon"><Code2 size={20} /></div>
+          <span>ROUTER MODULE</span>
+          <strong>backend/app/router.py</strong>
+          <p>Classification and model dispatch logic.</p>
+        </div>
+
+        <div className="trust-card">
+          <div className="trust-icon"><Database size={20} /></div>
+          <span>MODEL POLICY</span>
+          <strong>config/models.json</strong>
+          <p>Local model configuration and routing targets.</p>
+        </div>
+
+        <div className="trust-card">
+          <div className="trust-icon"><ShieldCheck size={20} /></div>
+          <span>SECURITY BOUNDARY</span>
+          <strong>OLLAMA · LOCALHOST</strong>
+          <p>Inference remains inside the local environment.</p>
+        </div>
+      </section>
+
     </div>
   );
 };

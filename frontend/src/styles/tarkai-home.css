@@ -1,0 +1,762 @@
+﻿/* =========================================================
+   TARKAI — SHRAM SATHI INSPIRED GOVERNMENT COMMAND CENTER
+   ========================================================= */
+
+.tarkai-home {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-bottom: 40px;
+  color: #17324d;
+}
+
+.tarkai-live-bar {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #092d4b;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 3px 12px rgba(12, 43, 70, 0.12);
+}
+
+.tarkai-live-label {
+  min-height: 42px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #b42323;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffffff;
+  animation: tarkaiPulse 1.2s infinite;
+}
+
+.tarkai-live-message {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 18px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status-ok,
+.status-alert {
+  margin-right: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.status-ok {
+  background: rgba(48, 180, 112, 0.15);
+  color: #78e0aa;
+}
+
+.status-alert {
+  background: rgba(220, 70, 70, 0.18);
+  color: #ff9b9b;
+}
+
+@keyframes tarkaiPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.tarkai-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 0.9fr);
+  gap: 42px;
+  align-items: center;
+  padding: 46px 44px;
+  background: linear-gradient(120deg, #ffffff 0%, #f4f8fb 58%, #eaf2f7 100%);
+  border: 1px solid #dbe5ec;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(18, 52, 78, 0.07);
+}
+
+.tarkai-hero-copy {
+  max-width: 700px;
+}
+
+.gov-tag {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 7px 11px;
+  border-left: 3px solid #e27c32;
+  background: #eef4f8;
+  color: #47657c;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.tarkai-hero h1 {
+  margin: 0;
+  color: #123b5d;
+  font-size: clamp(38px, 4.5vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  font-weight: 800;
+}
+
+.tarkai-hero h1 span {
+  display: block;
+  color: #17699c;
+}
+
+.tarkai-hero-copy > p {
+  max-width: 650px;
+  margin: 22px 0 0;
+  color: #506b7e;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.hero-primary,
+.hero-secondary {
+  min-height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.hero-primary {
+  border: 1px solid #0d5c8f;
+  background: #0d5c8f;
+  color: #ffffff;
+  box-shadow: 0 5px 14px rgba(13, 92, 143, 0.18);
+}
+
+.hero-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(13, 92, 143, 0.22);
+}
+
+.hero-secondary {
+  border: 1px solid #c7d6e0;
+  background: #ffffff;
+  color: #234e6d;
+}
+
+.hero-secondary:hover {
+  background: #f2f7fa;
+}
+
+.hero-proof {
+  display: flex;
+  gap: 34px;
+  margin-top: 34px;
+  padding-top: 22px;
+  border-top: 1px solid #d9e3ea;
+}
+
+.hero-proof div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-proof strong {
+  color: #123f60;
+  font-size: 23px;
+  line-height: 1;
+}
+
+.hero-proof span {
+  color: #708697;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.tarkai-hero-visual {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.tarkai-section {
+  width: 100%;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.section-kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: #2376a7;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: #163d5b;
+  font-size: 27px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.section-heading > p {
+  max-width: 480px;
+  margin: 0;
+  color: #708494;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.tarkai-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.metric-card {
+  position: relative;
+  min-height: 150px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dbe5eb;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(20, 53, 76, 0.045);
+}
+
+.metric-card svg {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 15px;
+  color: #1670a3;
+}
+
+.metric-card strong {
+  color: #173f5e;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.metric-card span {
+  margin-top: 7px;
+  color: #365a72;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.metric-card small {
+  margin-top: 7px;
+  color: #8495a2;
+  font-size: 10px;
+}
+
+.tarkai-assistant-panel {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 25px 28px;
+  border: 1px solid #cfdfe9;
+  border-radius: 12px;
+  background: linear-gradient(105deg, #eef6fa, #ffffff);
+  box-shadow: 0 5px 20px rgba(16, 56, 82, 0.055);
+}
+
+.assistant-icon {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: #0e5d8f;
+  color: #ffffff;
+}
+
+.assistant-content h2 {
+  margin: 0;
+  color: #163d5b;
+  font-size: 23px;
+}
+
+.assistant-content p {
+  max-width: 800px;
+  margin: 7px 0 12px;
+  color: #61798a;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.assistant-examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.assistant-examples span {
+  padding: 5px 9px;
+  border: 1px solid #cfdee7;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #426279;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.assistant-open {
+  min-height: 40px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #bcd0dd;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #145b86;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+}
+
+.hub-card {
+  min-height: 160px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 19px;
+  border: 1px solid #dce5eb;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.hub-card:hover {
+  transform: translateY(-2px);
+  border-color: #a9c5d7;
+  box-shadow: 0 8px 22px rgba(20, 60, 85, 0.08);
+}
+
+.hub-icon {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: #edf5f9;
+  color: #176b99;
+}
+
+.hub-text h3 {
+  margin: 0;
+  color: #214a66;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.hub-text p {
+  margin: 7px 0 0;
+  color: #778b99;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.hub-arrow {
+  position: absolute;
+  right: 16px;
+  bottom: 17px;
+  color: #91a5b2;
+}
+
+.tarkai-workflow {
+  padding: 28px;
+  border: 1px solid #d9e3e9;
+  border-radius: 12px;
+  background: #f6f9fb;
+}
+
+.workflow-line {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  position: relative;
+}
+
+.workflow-line::before {
+  content: '';
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  top: 19px;
+  height: 1px;
+  background: #bfd1dc;
+  z-index: 0;
+}
+
+.workflow-step {
+  position: relative;
+  z-index: 1;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.workflow-number {
+  width: 39px;
+  height: 39px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #f6f9fb;
+  border-radius: 50%;
+  background: #0e608f;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.workflow-step h3 {
+  margin: 0;
+  color: #31566e;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+}
+
+.workflow-step p {
+  margin: 7px 0 0;
+  color: #82939e;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+}
+
+.status-card {
+  min-height: 175px;
+  padding: 19px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dce5eb;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.status-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #547084;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-card-head svg {
+  color: #2878a5;
+}
+
+.status-card strong {
+  margin-top: 19px;
+  color: #264c64;
+  font-size: 18px;
+}
+
+.status-card p {
+  min-height: 34px;
+  margin: 7px 0 13px;
+  color: #82939f;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.status-link {
+  margin-top: auto;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: #176b99;
+  font-size: 10px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.text-success {
+  color: #16814e !important;
+}
+
+.text-running {
+  color: #176b99 !important;
+}
+
+.text-warning {
+  color: #b87813 !important;
+}
+
+.text-alert {
+  color: #ba3535 !important;
+}
+
+.security-banner {
+  margin-top: 8px;
+  padding: 27px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  border-radius: 12px;
+  background: #0d2e4d !important;
+  color: #ffffff !important;
+}
+
+.security-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.security-title svg {
+  color: #72dca5;
+}
+
+.security-title .section-kicker {
+  color: #72b9e5;
+}
+
+.security-title h2 {
+  margin: 0;
+  color: #ffffff !important;
+  font-size: 22px;
+}
+
+.security-points {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 11px 25px;
+  color: #dceaf4;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.security-points div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.security-points svg {
+  width: 15px;
+  color: #4ee39a;
+}
+
+.tarkai-final {
+  margin-top: 0;
+  padding: 30px 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  border-top: 1px solid #dce4ea;
+}
+
+.tarkai-final h2 {
+  margin: 0;
+  color: #163d5b;
+  font-size: 28px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 1100px) {
+  .tarkai-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .tarkai-hero-visual {
+    max-width: 760px;
+  }
+
+  .tarkai-metrics,
+  .status-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hub-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .workflow-line {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 28px;
+  }
+
+  .workflow-line::before {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .tarkai-home {
+    gap: 20px;
+  }
+
+  .tarkai-hero {
+    padding: 30px 22px;
+  }
+
+  .tarkai-hero h1 {
+    font-size: 38px;
+  }
+
+  .section-heading {
+    display: block;
+  }
+
+  .section-heading > p {
+    margin-top: 10px;
+  }
+
+  .tarkai-metrics,
+  .hub-grid,
+  .status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tarkai-assistant-panel {
+    grid-template-columns: auto 1fr;
+  }
+
+  .assistant-open {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  .workflow-line {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .security-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .security-points {
+    grid-template-columns: 1fr;
+  }
+
+  .tarkai-final {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tarkai-live-message {
+    overflow: hidden;
+  }
+
+  .tarkai-live-message span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 500px) {
+  .hero-proof {
+    gap: 18px;
+  }
+
+  .hero-proof strong {
+    font-size: 19px;
+  }
+
+  .workflow-line {
+    grid-template-columns: 1fr;
+  }
+
+  .tarkai-final h2 {
+    font-size: 23px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
+
+  .hero-primary,
+  .hero-secondary,
+  .hub-card {
+    transition: none;
+  }
+}
+
+footer {
+  margin-top: 0 !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+footer > div {
+  border-radius: 0 !important;
+}
+
+footer,
+footer * {
+  box-sizing: border-box;
+}

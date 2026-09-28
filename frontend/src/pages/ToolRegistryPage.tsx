@@ -1,142 +1,216 @@
-﻿import React from 'react';
-import { Eye, Code2, Folder, Terminal, HardDrive, FileText, CheckCircle2, FileCheck } from 'lucide-react';
+﻿import React, { useEffect, useState } from 'react';
+import {
+  Eye,
+  Code2,
+  Folder,
+  Terminal,
+  HardDrive,
+  FileText,
+  CheckCircle2,
+  FileCheck,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
+import '../styles/workspace-reference.css';
+
+type ToolStatus = {
+  name: string;
+  status: 'READY' | 'ERROR';
+  module: string;
+  functions?: string[];
+  details?: string;
+};
+
+type ToolsResponse = {
+  status: string;
+  count: number;
+  ready: number;
+  tools: ToolStatus[];
+};
+
+const toolMeta: Record<string, {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  constraint: string;
+}> = {
+  file_io: {
+    icon: Folder,
+    title: 'File I/O',
+    description: 'Read and write files in approved workspace locations.',
+    constraint: 'Limited to explicitly permitted directories and file types.',
+  },
+  code_sandbox: {
+    icon: Terminal,
+    title: 'Code Sandbox',
+    description: 'Run isolated code for bounded analysis tasks.',
+    constraint: 'No network access; execution limits are policy-defined.',
+  },
+  doc_search: {
+    icon: HardDrive,
+    title: 'Document Search / RAG',
+    description: 'Retrieve passages from the connected internal knowledge collection.',
+    constraint: 'Uses the indexed local corpus and Qwen3-Embedding retrieval stack.',
+  },
+  ocr_tool: {
+    icon: FileText,
+    title: 'OCR',
+    description: 'Extract text from supported scanned documents.',
+    constraint: 'Output quality depends on scan clarity and language support.',
+  },
+  vision_tool: {
+    icon: Eye,
+    title: 'Vision',
+    description: 'Interpret supported images using the configured local vision model.',
+    constraint: 'Requires the configured local vision-capable model.',
+  },
+  output_generator: {
+    icon: FileCheck,
+    title: 'Output Generator',
+    description: 'Generate DOCX, PPTX and XLSX deliverables in the local output workspace.',
+    constraint: 'Files are generated and stored inside the configured local outputs directory.',
+  },
+};
 
 export const ToolRegistryPage: React.FC = () => {
-  const toolsList = [
-    {
-      name: 'file_io',
-      file: 'backend/app/tools/file_io.py',
-      functions: 'read_file(path), write_file(path, content)',
-      desc: 'Sandboxed file operations restricted to data/sandbox/ directory with path traversal protection.',
-      icon: Folder,
-      color: 'var(--accent-cyan)',
-    },
-    {
-      name: 'code_sandbox',
-      file: 'backend/app/tools/code_sandbox.py',
-      functions: 'execute_code(code, language)',
-      desc: 'Subprocess code runner with 10s timeout in isolated temp folder with scrubbed network env.',
-      icon: Terminal,
-      color: 'var(--accent-blue)',
-    },
-    {
-      name: 'doc_search',
-      file: 'backend/app/tools/doc_search.py',
-      functions: 'search_knowledge_base(query)',
-      desc: 'Wraps IntelliMesh RAG pipeline (BM25 + TF-IDF + RRF + MMR) over local industrial SOPs.',
-      icon: HardDrive,
-      color: 'var(--accent-emerald)',
-    },
-    {
-      name: 'ocr_tool',
-      file: 'backend/app/tools/ocr_tool.py',
-      functions: 'extract_text(file_path)',
-      desc: 'OCR text extraction using pytesseract/pdf2image with pypdf fallback for scanned documents.',
-      icon: FileText,
-      color: 'var(--accent-amber)',
-    },
-    {
-      name: 'vision_tool',
-      file: 'backend/app/tools/vision_tool.py',
-      functions: 'describe_image(file_path, prompt)',
-      desc: 'Multimodal vision inspection via local moondream model using Ollama /api/generate base64 API.',
-      icon: Eye,
-      color: 'var(--accent-cyan)',
-    },
-    {
-      name: 'output_generator',
-      file: 'backend/app/output_generator.py',
-      functions: 'generate_docx(), generate_pptx(), generate_xlsx()',
-      desc: 'Deliverable document generation for Word, PowerPoint, and Excel files stored in outputs/.',
-      icon: FileCheck,
-      color: 'var(--accent-emerald)',
-    },
-  ];
+  const [data, setData] = useState<ToolsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const loadTools = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const response = await fetch('/api/tools/status');
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const result = await response.json();
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unable to connect to backend.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTools();
+
+    const timer = window.setInterval(loadTools, 15000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const backendOnline = data?.status === 'online';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-      {/* Hero Header */}
-      <div className="hero-section">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <Eye size={28} color="var(--accent-cyan)" />
-          <h2 className="hero-title">Multimodal AI & 6-Tool Modular Suite</h2>
-        </div>
-        <p className="hero-desc">
-          Comprehensive suite of 6 air-gapped industrial tools. Includes multimodal vision inspection via <code>moondream</code>, OCR text extraction via Tesseract/pypdf for scanned engineering documents, and sandboxed code execution.
-        </p>
-      </div>
+    <main className="workspace-reference-page">
+      <div className="workspace-shell">
 
-      {/* Multimodal & OCR Visual Pipeline Diagram */}
-      <div className="card">
-        <div className="card-title">
-          <span>Multimodal OCR & Vision Understanding Pipeline</span>
+        <div className="workspace-eyebrow">
+          Workspace / Capabilities
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '0.5rem' }}>
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', marginBottom: '0.3rem' }}>STEP 1: UPLOAD</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Document / Image</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Scanned PDF, diagram PNG/JPG uploaded via <code>POST /api/upload</code>.</p>
+        <header className="workspace-header">
+          <div>
+            <h1>Tool Registry</h1>
+            <p>Approved local tools and their operating constraints.</p>
           </div>
 
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-blue)', marginBottom: '0.3rem' }}>STEP 2: OCR / VISION</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Tesseract & Moondream</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Extracts text raster pixels or analyzes visual diagram features locally.</p>
+          <div className="workspace-environment">
+            <span className={`workspace-environment-dot ${error ? 'error' : ''}`} />
+            {backendOnline ? 'Local environment' : loading ? 'Checking local environment' : 'Backend unavailable'}
+          </div>
+        </header>
+
+        <div className="workspace-toolbar">
+          <div className="workspace-count">
+            {data ? `${data.ready} of ${data.count} tools ready` : 'Checking tool registry'}
           </div>
 
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', marginBottom: '0.3rem' }}>STEP 3: CONTEXT INGEST</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Agent Context Feed</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Extracted text or visual analysis passed into ReAct observation state.</p>
+          <button className="workspace-refresh" onClick={loadTools} disabled={loading}>
+            <RefreshCw size={13} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+            Refresh
+          </button>
+        </div>
+
+        {error && (
+          <div className="workspace-error">
+            Backend connection error: {error}
           </div>
+        )}
 
-          <div style={{ background: '#060b18', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', marginBottom: '0.3rem' }}>STEP 4: RESULT</div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Structured Insight</div>
-            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>Incorporated into final deliverable report or code execution.</p>
+        <section className="workspace-list">
+          {Object.entries(toolMeta).map(([name, meta], index) => {
+            const tool = data?.tools.find((item) => item.name === name);
+            const Icon = meta.icon;
+            const ready = tool?.status === 'READY';
+
+            return (
+              <article className="workspace-tool-card" key={name}>
+                <div className="workspace-icon">
+                  <Icon size={21} />
+                </div>
+
+                <div className="workspace-number">
+                  {String(index + 1).padStart(2, '0')}
+                </div>
+
+                <div className="workspace-tool-main">
+                  <h2 className="workspace-tool-title">{meta.title}</h2>
+
+                  <p className="workspace-tool-desc">
+                    {meta.description}
+                  </p>
+
+                  <div className="workspace-constraint">
+                    <strong>CONSTRAINT</strong>
+                    <span>{meta.constraint}</span>
+                  </div>
+
+                  {tool && (
+                    <div className="workspace-meta">
+                      {tool.module}
+                      {tool.functions?.length
+                        ? ` · ${tool.functions.join(', ')}`
+                        : ''}
+                    </div>
+                  )}
+                </div>
+
+                <div className={`workspace-status ${ready ? 'ready' : tool ? 'error' : ''}`}>
+                  {tool ? (
+                    ready ? (
+                      <>
+                        <CheckCircle2 size={12} style={{ verticalAlign: 'middle', marginRight: 5 }} />
+                        READY
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle size={12} style={{ verticalAlign: 'middle', marginRight: 5 }} />
+                        ERROR
+                      </>
+                    )
+                  ) : loading ? 'CHECKING' : 'UNAVAILABLE'}
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        <section className="workspace-panel" style={{ marginTop: 18 }}>
+          <div className="workspace-panel-title">
+            Live backend registry
           </div>
-        </div>
-      </div>
+          <div className="workspace-panel-subtitle">
+            Status is read from <code>GET /api/tools/status</code>. Tool definitions and readiness are not hardcoded.
+          </div>
+        </section>
 
-      {/* Technical Implementation Reference */}
-      <div className="card">
-        <div className="card-title">
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Code2 size={18} color="var(--accent-cyan)" /> Technical Implementation Reference
-          </span>
-          <span className="badge badge-secure">R4 VERIFIED LIVE</span>
-        </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-          <div>📁 <strong>Tool Suite Location:</strong> <code>backend/app/tools/</code></div>
-          <div>🛠️ <strong>Registered Tools Count:</strong> 6 sandboxed tools</div>
-          <div>🔒 <strong>Sandbox Timeout:</strong> 10s execution timeout on subprocesses</div>
-        </div>
       </div>
-
-      {/* 6 Tool Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>
-        {toolsList.map((t, idx) => {
-          const IconComp = t.icon;
-          return (
-            <div key={idx} className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
-                <IconComp size={20} color={t.color} />
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-mono)' }}>{t.name}</h3>
-              </div>
-              <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', marginBottom: '0.4rem' }}>
-                <code>{t.file}</code>
-              </div>
-              <div style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', marginBottom: '0.6rem' }}>
-                {t.functions}
-              </div>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.45' }}>
-                {t.desc}
-              </p>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    </main>
   );
 };

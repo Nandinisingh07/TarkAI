@@ -2,227 +2,657 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ShieldCheck,
-  Zap,
-  GitCommit,
-  Wrench,
-  FileCheck,
-  Database,
-  Play,
-  Activity,
   Cpu,
-  CheckCircle2,
+  FileCheck,
+  Activity,
+  Database,
+  Eye,
+  Users,
   ArrowRight,
-  FileText
+  Play,
+  CheckCircle2,
+  Radio,
+  Bot,
+  LockKeyhole,
+  FileOutput,
+  GitBranch,
 } from 'lucide-react';
+
 import { useTaskContext } from '../context/TaskContext';
 import { fetchAirGapStatus, fetchReviewDrafts } from '../services/api';
 import { ImageSlideshow } from '../components/ImageSlideshow';
+import '../styles/tarkai-home.css';
 
 const homeSlides = [
-  { src: '/images/home/home1.jpg', alt: 'MRPL / government infrastructure', caption: 'Sovereign On-Premise Agentic AI Workbench' },
-  { src: '/images/home/home2.jpg', alt: 'MRPL / government infrastructure' },
-  { src: '/images/home/home3.jpg', alt: 'MRPL / government infrastructure' },
+  {
+    src: '/images/home/home1.jpg',
+    alt: 'Government and critical infrastructure',
+    caption: 'Sovereign AI Infrastructure',
+  },
+  {
+    src: '/images/home/home2.jpg',
+    alt: 'Industrial operations',
+    caption: 'Intelligence for Critical Operations',
+  },
+  {
+    src: '/images/home/home3.jpg',
+    alt: 'Secure data infrastructure',
+    caption: 'AI That Stays With Your Data',
+  },
+];
+
+const hubs = [
+  {
+    title: 'AI Operations Assistant',
+    description:
+      'Interact with TarkAI through a secure local intelligence interface.',
+    icon: Bot,
+    path: '/assistant',
+  },
+  {
+    title: 'Intelligent Model Router',
+    description:
+      'Automatically select the appropriate local model for each task.',
+    icon: GitBranch,
+    path: '/router',
+  },
+  {
+    title: 'Agentic Reasoning Engine',
+    description:
+      'Execute multi-step ReAct workflows with observable execution traces.',
+    icon: Cpu,
+    path: '/reasoning',
+  },
+  {
+    title: 'Multimodal Intelligence',
+    description:
+      'Process documents, images, OCR and visual operational data locally.',
+    icon: Eye,
+    path: '/tools',
+  },
+  {
+    title: 'Knowledge Intelligence',
+    description:
+      'Retrieve grounded answers from approved local SOPs and knowledge bases.',
+    icon: Database,
+    path: '/knowledge',
+  },
+  {
+    title: 'Approval Gate',
+    description:
+      'Keep sensitive and low-confidence outputs under human control.',
+    icon: Users,
+    path: '/approvals',
+  },
+  {
+    title: 'Secure Operations',
+    description:
+      'Monitor air-gap status, network activity and security events.',
+    icon: ShieldCheck,
+    path: '/air-gap',
+  },
+  {
+    title: 'Deliverable Factory',
+    description:
+      'Generate verified operational documents and reports locally.',
+    icon: FileOutput,
+    path: '/deliverables',
+  },
+];
+
+const workflowSteps = [
+  {
+    number: '01',
+    title: 'CONFIDENTIAL INPUT',
+    description: 'Files, telemetry, images or operational queries',
+  },
+  {
+    number: '02',
+    title: 'LOCAL MODEL ROUTER',
+    description: 'Select the appropriate on-premise model',
+  },
+  {
+    number: '03',
+    title: 'REACT AGENT',
+    description: 'Reason, use tools and execute controlled steps',
+  },
+  {
+    number: '04',
+    title: 'KNOWLEDGE + TOOLS',
+    description: 'Retrieve SOPs and process operational data',
+  },
+  {
+    number: '05',
+    title: 'HUMAN APPROVAL',
+    description: 'Review sensitive or low-confidence results',
+  },
+  {
+    number: '06',
+    title: 'VERIFIED OUTPUT',
+    description: 'Generate the final operational deliverable',
+  },
 ];
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { modelUsed, taskStatus, trace, resultData, deliverable } = useTaskContext();
+  const { taskStatus, trace, deliverable } = useTaskContext();
+
   const [airGapData, setAirGapData] = useState<any>(null);
-  const [pendingReviews, setPendingReviews] = useState<number>(0);
+  const [pendingReviews, setPendingReviews] = useState(0);
 
   useEffect(() => {
-    fetchAirGapStatus().then((res: any) => setAirGapData(res)).catch(() => {});
-    fetchReviewDrafts('pending_review').then((res: any[]) => setPendingReviews(res?.length || 0)).catch(() => {});
+    fetchAirGapStatus()
+      .then((res: any) => setAirGapData(res))
+      .catch(() => { });
+
+    fetchReviewDrafts('pending_review')
+      .then((res: any[]) => {
+        setPendingReviews(res?.length || 0);
+      })
+      .catch(() => { });
   }, []);
 
-  const isSecure = airGapData?.external_calls_detected === 0 || airGapData === null;
+  const secure =
+    airGapData?.external_calls_detected === 0 || airGapData === null;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <ImageSlideshow slides={homeSlides} height="68vh" />
+    <main className="tarkai-home" id="main-content">
 
-      <div className="page-header-strip">
-        <div>
-          <h1 className="page-title">
-            System Overview
+      <section className="tarkai-live-bar">
+        <div className="tarkai-live-label">
+          <span className="live-dot" />
+          LIVE OPERATIONAL FEED
+        </div>
+
+        <div className="tarkai-live-message">
+          <Radio size={14} />
+          <span>
+            {secure
+              ? 'TarkAI operational • Local AI services active • External calls: 0'
+              : 'Security monitoring requires attention'}
+          </span>
+        </div>
+
+        <div className={secure ? 'status-ok' : 'status-alert'}>
+          {secure ? 'SYSTEM SECURE' : 'CHECK STATUS'}
+        </div>
+      </section>
+
+      <section className="tarkai-hero">
+
+        <div className="tarkai-hero-copy">
+          <div className="gov-tag">
+            NATIONAL CONFIDENTIAL AI OPERATIONS PLATFORM
+          </div>
+
+          <h1>
+            Intelligence That
+            <span> Stays Where Your Data Stays.</span>
           </h1>
-          <p className="page-subtitle">
-            Sovereign On-Premise Agentic AI Workbench — Operational Readiness & Security Status
+
+          <p>
+            TarkAI is a sovereign, on-premise agentic AI platform designed
+            for sensitive operational environments where confidential data
+            cannot leave the organization.
           </p>
+
+          <div className="hero-actions">
+            <button
+              className="hero-primary"
+              onClick={() => navigate('/assistant')}
+            >
+              <Play size={16} />
+              Run AI Operations
+            </button>
+
+            <button
+              className="hero-secondary"
+              onClick={() => navigate('/air-gap')}
+            >
+              View Security Status
+              <ArrowRight size={16} />
+            </button>
+          </div>
+
+          <div className="hero-proof">
+            <div>
+              <strong>0</strong>
+              <span>External Calls</span>
+            </div>
+
+            <div>
+              <strong>100%</strong>
+              <span>Local Processing</span>
+            </div>
+
+            <div>
+              <strong>HITL</strong>
+              <span>Human Control</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="tarkai-hero-visual">
+          <ImageSlideshow
+            slides={homeSlides}
+            height="420px"
+          />
+        </div>
+      </section>
+
+      <section className="tarkai-section">
+
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">
+              TARKAI PLATFORM
+            </span>
+
+            <h2>
+              Secure Intelligence Command Center
+            </h2>
+          </div>
+
+          <p>
+            One controlled environment for local models, agentic reasoning,
+            multimodal tools, knowledge retrieval and human approval.
+          </p>
+        </div>
+
+        <div className="tarkai-metrics">
+
+          <div className="metric-card">
+            <ShieldCheck />
+            <strong>0</strong>
+            <span>External Calls</span>
+            <small>Air-gap monitoring active</small>
+          </div>
+
+          <div className="metric-card">
+            <Cpu />
+            <strong>4</strong>
+            <span>Local AI Models</span>
+            <small>On-premise inference</small>
+          </div>
+
+          <div className="metric-card">
+            <Activity />
+            <strong>7</strong>
+            <span>Security & AI Modules</span>
+            <small>Integrated operations layer</small>
+          </div>
+
+          <div className="metric-card">
+            <Users />
+            <strong>HITL</strong>
+            <span>Approval Control</span>
+            <small>Human-in-the-loop workflow</small>
+          </div>
+
+        </div>
+      </section>
+
+      <section className="tarkai-assistant-panel">
+
+        <div className="assistant-icon">
+          <Bot size={28} />
+        </div>
+
+        <div className="assistant-content">
+
+          <span className="section-kicker">
+            TARKAI AI ASSISTANT
+          </span>
+
+          <h2>
+            Ask. Analyze. Act. Locally.
+          </h2>
+
+          <p>
+            Query operational data, search approved knowledge, analyze files
+            and execute controlled AI workflows without sending sensitive
+            information outside the environment.
+          </p>
+
+          <div className="assistant-examples">
+            <span>Analyze telemetry</span>
+            <span>Search SOPs</span>
+            <span>Inspect documents</span>
+            <span>Generate report</span>
+          </div>
+
         </div>
 
         <button
-          className="btn-blue"
+          className="assistant-open"
           onClick={() => navigate('/assistant')}
         >
-          <Play size={15} />
-          <span>Open AI Assistant</span>
+          Open Assistant
+          <ArrowRight size={16} />
         </button>
-      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+      </section>
 
-        <div className="instrument-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-            <ShieldCheck size={20} color={isSecure ? '#34d399' : '#f87171'} />
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                System Security
-              </div>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: isSecure ? '#34d399' : '#f87171' }}>
-                {isSecure ? 'AIR-GAP SECURE (0 Egress)' : 'Security Alert'}
-              </div>
-            </div>
+      <section className="tarkai-section">
+
+        <div className="section-heading">
+
+          <div>
+            <span className="section-kicker">
+              CORE INTELLIGENCE HUBS
+            </span>
+
+            <h2>
+              One Platform. Multiple Operational Capabilities.
+            </h2>
           </div>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            All model calls, socket connections, and tool executions are strictly isolated on local network.
+
+          <p>
+            Every capability remains inside the controlled TarkAI environment.
           </p>
+
         </div>
 
-        <div className="instrument-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-            <Cpu size={20} color="#60a5fa" />
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                AI Models Status
-              </div>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: '#60a5fa' }}>
-                Operational & Loaded
-              </div>
-            </div>
-          </div>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            Local models (<code style={{ color: '#60a5fa' }}>phi3:mini</code>, <code style={{ color: '#60a5fa' }}>qwen2.5-coder:1.5b</code>, <code style={{ color: '#60a5fa' }}>moondream</code>) ready.
-          </p>
-        </div>
+        <div className="hub-grid">
 
-        <div className="instrument-card" onClick={() => navigate('/approvals')} style={{ cursor: 'pointer' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-            <FileCheck size={20} color={pendingReviews > 0 ? '#fbbf24' : '#34d399'} />
-            <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                Approval Gate Queue
-              </div>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: pendingReviews > 0 ? '#fbbf24' : '#34d399' }}>
-                {pendingReviews > 0 ? `${pendingReviews} Drafts Awaiting Review` : 'No Pending Approvals'}
-              </div>
-            </div>
-          </div>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            Human-in-the-loop review queue for low-confidence outputs and sensitive reports.
-          </p>
-        </div>
+          {hubs.map((hub) => {
+            const Icon = hub.icon;
 
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '16px' }}>
-
-        <div className="instrument-card">
-          <div className="card-header-bar">
-            <div className="card-title">
-              <Activity size={16} color="var(--accent-blue)" />
-              <span>Current Task Status</span>
-            </div>
-          </div>
-
-          <div style={{ padding: '8px 0' }}>
-            {taskStatus === 'idle' && (
-              <div className="standby-row">
-                <span className="idle-dot" />
-                <span style={{ color: 'var(--text-secondary)' }}>No active tasks running. System ready.</span>
-              </div>
-            )}
-            {taskStatus === 'running' && (
-              <div style={{ padding: '12px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '6px', color: '#60a5fa', fontWeight: 600 }}>
-                Processing operational task... ({trace.length} steps executed)
-              </div>
-            )}
-            {taskStatus === 'completed' && (
-              <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px', color: '#34d399', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CheckCircle2 size={16} /> Latest task execution completed successfully.
-              </div>
-            )}
-          </div>
-
-          <button className="btn-outline" onClick={() => navigate('/assistant')} style={{ marginTop: '8px' }}>
-            <span>Go to AI Assistant</span>
-            <ArrowRight size={14} />
-          </button>
-        </div>
-
-        <div className="instrument-card">
-          <div className="card-header-bar">
-            <div className="card-title">
-              <FileText size={16} color="var(--accent-teal)" />
-              <span>Latest Deliverable Output</span>
-            </div>
-          </div>
-
-          <div style={{ padding: '8px 0' }}>
-            {deliverable ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                  {deliverable.filename}
-                </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                  Format: {deliverable.format.toUpperCase()} Document
-                </div>
-                <a href={deliverable.download_url} download className="btn-teal" style={{ textDecoration: 'none', width: 'fit-content', marginTop: '4px' }}>
-                  Download Deliverable File
-                </a>
-              </div>
-            ) : (
-              <div className="standby-row">
-                <span className="idle-dot" />
-                <span style={{ color: 'var(--text-secondary)' }}>No deliverable documents generated yet.</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-      </div>
-
-      <div className="instrument-card">
-        <div className="card-header-bar">
-          <div className="card-title">
-            <span>System Modules Navigation</span>
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-          {[
-            { title: 'Air-Gap & Network Monitor', path: '/air-gap', icon: ShieldCheck, desc: 'Local Socket Monitoring' },
-            { title: 'Model Router', path: '/router', icon: Zap, desc: 'Auto Model Classifier' },
-            { title: 'Agent Reasoning', path: '/reasoning', icon: GitCommit, desc: 'Multi-Step ReAct Loop' },
-            { title: 'Tool Registry', path: '/tools', icon: Wrench, desc: 'OCR, Vision & Sandboxes' },
-            { title: 'Deliverables', path: '/deliverables', icon: FileCheck, desc: '.docx, .pptx, .xlsx Factory' },
-            { title: 'Knowledge Search', path: '/knowledge', icon: Database, desc: 'Local SOP Retrieval' },
-          ].map((m, idx) => {
-            const IconComp = m.icon;
             return (
-              <div
-                key={idx}
-                onClick={() => navigate(m.path)}
-                style={{
-                  background: 'var(--bg-panel-elevated)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
-                  padding: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease'
-                }}
-                className="btn-outline-hover"
+              <button
+                key={hub.title}
+                className="hub-card"
+                onClick={() => navigate(hub.path)}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <IconComp size={16} color="var(--accent-blue)" />
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{m.title}</span>
+
+                <div className="hub-icon">
+                  <Icon size={20} />
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{m.desc}</div>
-              </div>
+
+                <div className="hub-text">
+                  <h3>{hub.title}</h3>
+                  <p>{hub.description}</p>
+                </div>
+
+                <ArrowRight
+                  className="hub-arrow"
+                  size={17}
+                />
+
+              </button>
             );
           })}
+
         </div>
-      </div>
-    </div>
+      </section>
+
+      <section className="tarkai-workflow">
+
+        <div className="section-heading">
+
+          <div>
+            <span className="section-kicker">
+              LIVE AI WORKFLOW
+            </span>
+
+            <h2>
+              From Confidential Input to Verified Output
+            </h2>
+          </div>
+
+        </div>
+
+        <div className="workflow-line">
+
+          {workflowSteps.map((step) => (
+            <div
+              className="workflow-step"
+              key={step.number}
+            >
+
+              <div className="workflow-number">
+                {step.number}
+              </div>
+
+              <h3>
+                {step.title}
+              </h3>
+
+              <p>
+                {step.description}
+              </p>
+
+            </div>
+          ))}
+
+        </div>
+      </section>
+
+      <section className="tarkai-section">
+
+        <div className="section-heading">
+
+          <div>
+            <span className="section-kicker">
+              SYSTEM STATUS
+            </span>
+
+            <h2>
+              Operational Readiness
+            </h2>
+          </div>
+
+        </div>
+
+        <div className="status-grid">
+
+          <div className="status-card">
+
+            <div className="status-card-head">
+              <Activity size={19} />
+              <span>Current Task</span>
+            </div>
+
+            <strong
+              className={
+                taskStatus === 'completed'
+                  ? 'text-success'
+                  : taskStatus === 'running'
+                    ? 'text-running'
+                    : ''
+              }
+            >
+              {taskStatus === 'running'
+                ? 'PROCESSING'
+                : taskStatus === 'completed'
+                  ? 'COMPLETED'
+                  : 'STANDBY'}
+            </strong>
+
+            <p>
+              {taskStatus === 'running'
+                ? `${trace.length} execution steps recorded.`
+                : 'No active operational task.'}
+            </p>
+
+            <button
+              className="status-link"
+              onClick={() => navigate('/assistant')}
+            >
+              Open Operations
+              <ArrowRight size={14} />
+            </button>
+
+          </div>
+
+          <div className="status-card">
+
+            <div className="status-card-head">
+              <ShieldCheck size={19} />
+              <span>Air-Gap Security</span>
+            </div>
+
+            <strong
+              className={
+                secure
+                  ? 'text-success'
+                  : 'text-alert'
+              }
+            >
+              {secure ? 'SECURE' : 'ATTENTION'}
+            </strong>
+
+            <p>
+              External calls detected:{' '}
+              {airGapData?.external_calls_detected ?? 0}
+            </p>
+
+            <button
+              className="status-link"
+              onClick={() => navigate('/air-gap')}
+            >
+              Inspect Security
+              <ArrowRight size={14} />
+            </button>
+
+          </div>
+
+          <div className="status-card">
+
+            <div className="status-card-head">
+              <FileCheck size={19} />
+              <span>Approval Gate</span>
+            </div>
+
+            <strong
+              className={
+                pendingReviews > 0
+                  ? 'text-warning'
+                  : 'text-success'
+              }
+            >
+              {pendingReviews > 0
+                ? `${pendingReviews} PENDING`
+                : 'CLEAR'}
+            </strong>
+
+            <p>
+              Human review queue for sensitive outputs.
+            </p>
+
+            <button
+              className="status-link"
+              onClick={() => navigate('/approvals')}
+            >
+              Open Approval Gate
+              <ArrowRight size={14} />
+            </button>
+
+          </div>
+
+          <div className="status-card">
+
+            <div className="status-card-head">
+              <FileOutput size={19} />
+              <span>Latest Deliverable</span>
+            </div>
+
+            <strong>
+              {deliverable ? 'AVAILABLE' : 'NONE'}
+            </strong>
+
+            <p>
+              {deliverable
+                ? deliverable.filename
+                : 'No operational document generated yet.'}
+            </p>
+
+            {deliverable && (
+              <a
+                className="status-link"
+                href={deliverable.download_url}
+                download
+              >
+                Download
+                <ArrowRight size={14} />
+              </a>
+            )}
+
+          </div>
+
+        </div>
+      </section>
+
+      <section className="security-banner">
+
+        <div className="security-title">
+
+          <LockKeyhole size={27} />
+
+          <div>
+            <span className="section-kicker">
+              SECURITY ASSURANCE
+            </span>
+
+            <h2>
+              Built for Data That Cannot Leave.
+            </h2>
+          </div>
+
+        </div>
+
+        <div className="security-points">
+
+          <div>
+            <CheckCircle2 />
+            Local Model Inference
+          </div>
+
+          <div>
+            <CheckCircle2 />
+            Air-Gap Monitoring
+          </div>
+
+          <div>
+            <CheckCircle2 />
+            Human Approval Gate
+          </div>
+
+          <div>
+            <CheckCircle2 />
+            Audit Trail
+          </div>
+
+        </div>
+
+      </section>
+
+      <section className="tarkai-final">
+
+        <div>
+
+          <span className="section-kicker">
+            NATIONAL CONFIDENTIAL AI OPERATIONS
+          </span>
+
+          <h2>
+            When the data cannot leave,
+            <br />
+            the intelligence must come to it.
+          </h2>
+
+        </div>
+
+        <button
+          onClick={() => navigate('/assistant')}
+          className="hero-primary"
+        >
+          Enter TarkAI
+          <ArrowRight size={17} />
+        </button>
+
+      </section>
+
+    </main>
   );
 };

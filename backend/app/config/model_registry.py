@@ -1,4 +1,4 @@
-import os
+﻿import os
 from pathlib import Path
 from typing import Dict, Any
 
@@ -62,7 +62,7 @@ class ModelRegistry:
         loaded_vals = {
             "GENERAL_MODEL": "phi3:mini",
             "CODING_MODEL": "qwen2.5-coder:1.5b",
-            "VISION_MODEL": "qwen3-vl:4b",
+            "VISION_MODEL": "moondream:latest",
             "OCR_ENGINE": "PaddleOCR",
             "OBJECT_DETECTION_MODEL": "rf-detr",
             "CONFIDENCE_THRESHOLD": "0.8",
@@ -94,7 +94,7 @@ class ModelRegistry:
 
     @property
     def VISION_MODEL(self) -> str:
-        return self._config.get("VISION_MODEL", "qwen3-vl:4b")
+        return self._config.get("VISION_MODEL", "moondream:latest")
 
     @property
     def OCR_ENGINE(self) -> str:

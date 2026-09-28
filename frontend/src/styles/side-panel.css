@@ -1,0 +1,183 @@
+/* Side panel + stop button + console card additions.
+   Kept in its own file so nothing here can collide with ai-assistant.css. */
+
+.btn-stop {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.btn-stop:hover {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.reasoning-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-accent, #2563eb);
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--accent-blue, #2563eb);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.reasoning-toggle-btn:hover {
+  background: rgba(37, 99, 235, 0.16);
+}
+
+.side-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 40;
+}
+.side-panel-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(440px, 92vw);
+  background: var(--bg-panel, #0b1120);
+  border-left: 1px solid var(--border-subtle, #1e293b);
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.35);
+  transform: translateX(100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+}
+.side-panel.open {
+  transform: translateX(0);
+}
+
+.side-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-subtle, #1e293b);
+  flex-shrink: 0;
+}
+.side-panel-head strong {
+  font-size: 14px;
+  color: var(--text-primary, #f8fafc);
+}
+.side-panel-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+}
+.side-panel-close:hover {
+  background: var(--bg-input, #111827);
+  color: var(--text-primary, #f8fafc);
+}
+
+.side-panel-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px 0;
+  flex-shrink: 0;
+}
+.side-panel-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px 8px 0 0;
+  border: none;
+  background: transparent;
+  color: var(--text-muted, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.side-panel-tab.active {
+  background: var(--bg-input, #111827);
+  color: var(--accent-blue, #2563eb);
+}
+
+.side-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+}
+.side-panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.side-panel-empty {
+  font-size: 13px;
+  color: var(--text-muted, #64748b);
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* Clean chat-style answer */
+.clean-answer-card {
+  background: var(--bg-panel, #0b1120);
+  border: 1px solid var(--border-subtle, #1e293b);
+  border-radius: 10px;
+  padding: 22px 24px;
+}
+.clean-answer-text {
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--text-primary, #f8fafc);
+  white-space: pre-wrap;
+}
+.clean-answer-text h1, .clean-answer-text h2, .clean-answer-text h3 {
+  margin: 14px 0 6px;
+  color: var(--text-primary, #f8fafc);
+}
+.clean-answer-text ul, .clean-answer-text ol {
+  padding-left: 20px;
+  margin: 6px 0;
+}
+
+/* Live console mini-cards (metrics row upgrade) */
+.ai-metric-card.live::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  animation: pulse-dot 1.6s infinite;
+}
+.ai-metric-card {
+  position: relative;
+}
+@keyframes pulse-dot {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}

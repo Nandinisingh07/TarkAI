@@ -1,0 +1,1321 @@
+﻿/* =========================================================
+   TARKAI AI ASSISTANT — COMMAND CENTER UI
+   ========================================================= */
+
+.ai-command-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 40px;
+  color: #17324d;
+}
+
+/* LIVE BAR */
+
+.ai-live-strip {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border-radius: 7px;
+  background: #082d4a;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(10, 48, 76, .10);
+}
+
+.ai-live-left,
+.ai-live-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-live-left {
+  font-size: 10px;
+  letter-spacing: .07em;
+}
+
+.ai-live-left strong {
+  color: #fff;
+}
+
+.ai-live-left span:last-child {
+  color: #9fc0d4;
+}
+
+.ai-divider {
+  opacity: .35;
+}
+
+.ai-live-right {
+  color: #9ed5bc;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .06em;
+}
+
+.ai-live-right span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ai-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #46d894;
+  box-shadow: 0 0 0 4px rgba(70,216,148,.12);
+}
+
+/* HERO */
+
+.ai-page-hero {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 22px;
+  padding: 30px;
+  border: 1px solid #d7e3ea;
+  border-radius: 12px;
+  background:
+    linear-gradient(120deg, #ffffff, #f0f6fa);
+  box-shadow: 0 7px 25px rgba(20,55,78,.055);
+}
+
+.ai-hero-copy {
+  max-width: 760px;
+}
+
+.ai-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 13px;
+  color: #1770a2;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .11em;
+}
+
+.ai-hero-copy h1 {
+  margin: 0;
+  color: #123c5d;
+  font-size: clamp(35px,4vw,52px);
+  line-height: 1.05;
+  letter-spacing: -.035em;
+}
+
+.ai-hero-copy h1 span {
+  display: block;
+  color: #1972a4;
+}
+
+.ai-hero-copy > p {
+  max-width: 700px;
+  margin: 16px 0 0;
+  color: #62798a;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.ai-hero-status {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 21px;
+}
+
+.ai-hero-status div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #41657b;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.ai-hero-status svg {
+  color: #20925f;
+}
+
+/* COMMAND STATUS */
+
+.ai-command-status {
+  padding: 18px;
+  border: 1px solid #cbdce6;
+  border-radius: 9px;
+  background: #092f4d;
+  color: #fff;
+}
+
+.command-status-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+
+.command-status-head div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mini-label {
+  color: #79b5d4;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .1em;
+}
+
+.command-status-head strong {
+  font-size: 16px;
+}
+
+.status-icon {
+  color: #56d99a;
+}
+
+.status-icon-running {
+  color: #65bce8;
+  animation: aiSpin 1.7s linear infinite;
+}
+
+@keyframes aiSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.command-status-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 13px;
+  color: #91b0c3;
+  font-size: 10px;
+}
+
+.command-status-line strong {
+  max-width: 170px;
+  overflow: hidden;
+  color: #fff;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* METRICS */
+
+.ai-metrics {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 12px;
+}
+
+.ai-metric-card {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #dce6ec;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.ai-metric-card > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-metric-card span {
+  color: #8093a0;
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .08em;
+}
+
+.ai-metric-card strong {
+  overflow: hidden;
+  color: #244d67;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-metric-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.ai-metric-icon.blue {
+  background: #eaf3f9;
+  color: #1771a4;
+}
+
+.ai-metric-icon.teal {
+  background: #e8f7f5;
+  color: #148b84;
+}
+
+.ai-metric-icon.green {
+  background: #eaf7f0;
+  color: #238b5a;
+}
+
+.ai-metric-icon.orange {
+  background: #fff3e6;
+  color: #c17627;
+}
+
+/* WORKSPACE */
+
+.ai-workspace {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  gap: 18px;
+}
+
+.ai-input-column,
+.ai-trace-column {
+  min-width: 0;
+}
+
+.ai-section-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.ai-section-kicker {
+  display: block;
+  margin-bottom: 5px;
+  color: #2374a2;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+
+.ai-section-header h2 {
+  margin: 0;
+  color: #173f5b;
+  font-size: 21px;
+  letter-spacing: -.02em;
+}
+
+.ai-section-header p {
+  max-width: 520px;
+  margin: 5px 0 0;
+  color: #82929d;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.ai-new-task {
+  min-height: 34px;
+  padding: 0 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #cbdce5;
+  border-radius: 6px;
+  background: #fff;
+  color: #24627f;
+  font-size: 10px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.ai-task-shell,
+.ai-trace-shell {
+  min-height: 360px;
+  padding: 16px;
+  border: 1px solid #d9e4ea;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(20,55,78,.045);
+}
+
+.ai-trace-shell {
+  overflow: hidden;
+}
+
+/* MODEL ROUTER */
+
+.ai-router-result {
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid #d8e4ea;
+  border-radius: 9px;
+  background: #f7fafc;
+}
+
+.router-result-head,
+.citation-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+}
+
+.router-result-head strong {
+  display: block;
+  color: #31566d;
+  font-size: 12px;
+}
+
+.router-result-head > svg {
+  color: #2476a3;
+}
+
+/* TRACE */
+
+.ai-trace-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid #d8e7ed;
+  border-radius: 20px;
+  color: #587486;
+  font-size: 8px;
+  font-weight: 850;
+}
+
+.ai-trace-live span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #94a8b4;
+}
+
+.ai-trace-live span.pulse {
+  background: #31bd7a;
+  box-shadow: 0 0 0 4px rgba(49,189,122,.12);
+  animation: aiPulse 1.2s infinite;
+}
+
+@keyframes aiPulse {
+  50% { opacity: .35; }
+}
+
+/* PIPELINE */
+
+.ai-pipeline {
+  padding: 22px;
+  border: 1px solid #d9e4ea;
+  border-radius: 11px;
+  background: #f5f9fb;
+}
+
+.ai-pipeline-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.ai-pipeline-track > svg {
+  flex: 0 0 auto;
+  color: #9aabb6;
+}
+
+.pipeline-node {
+  min-width: 125px;
+  flex: 1;
+  padding: 13px;
+  border: 1px solid #d5e1e8;
+  border-radius: 8px;
+  background: #fff;
+  text-align: center;
+}
+
+.pipeline-node.active {
+  border-color: #8ebed6;
+  box-shadow: 0 0 0 3px rgba(34,118,163,.07);
+}
+
+.pipeline-node span {
+  display: block;
+  margin-bottom: 5px;
+  color: #2680ad;
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.pipeline-node strong {
+  display: block;
+  color: #355b72;
+  font-size: 9px;
+}
+
+.pipeline-node small {
+  display: block;
+  margin-top: 4px;
+  color: #8a9ba6;
+  font-size: 8px;
+}
+
+/* RESULTS */
+
+.ai-results-area {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.ai-result-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.ai-result-heading h2 {
+  margin: 0;
+  color: #173f5b;
+  font-size: 23px;
+}
+
+.ai-result-heading p {
+  margin: 5px 0 0;
+  color: #84949f;
+  font-size: 10px;
+}
+
+.result-complete {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border-radius: 5px;
+  background: #eaf8f0;
+  color: #198452;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.ai-result-card,
+.ai-citation-card {
+  padding: 17px;
+  border: 1px solid #d9e4ea;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(20,55,78,.04);
+}
+
+.citation-heading {
+  padding-bottom: 11px;
+  border-bottom: 1px solid #e5edf1;
+}
+
+.citation-heading h3 {
+  margin: 0;
+  color: #31566d;
+  font-size: 14px;
+}
+
+.citation-heading > svg {
+  color: #2574a0;
+}
+
+/* READY */
+
+.ai-ready-panel {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px 20px;
+  border: 1px dashed #c8d9e2;
+  border-radius: 9px;
+  background: #f8fbfc;
+}
+
+.ready-icon {
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #eaf3f8;
+  color: #2375a1;
+}
+
+.ai-ready-panel h3 {
+  margin: 0;
+  color: #36596e;
+  font-size: 13px;
+}
+
+.ai-ready-panel p {
+  margin: 4px 0 0;
+  color: #8798a3;
+  font-size: 10px;
+}
+
+.ready-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #218354;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.ready-status span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2dbb78;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1000px) {
+  .ai-page-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-metrics {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .ai-workspace {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .ai-live-right {
+    display: none;
+  }
+
+  .ai-page-hero {
+    padding: 22px;
+  }
+
+  .ai-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-pipeline-track {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ai-pipeline-track > svg {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+
+  .ai-result-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ai-ready-panel {
+    align-items: flex-start;
+  }
+
+  .ready-status {
+    display: none;
+  }
+}
+
+/* =========================================================
+   TARKAI — GOVERNMENT FRIENDLY MISSION INPUT
+   Stronger, larger, interactive, accessible
+   ========================================================= */
+
+.ai-input-column {
+  width: 100%;
+}
+
+/* Bigger section heading */
+.ai-input-column .ai-section-header {
+  margin-bottom: 16px;
+}
+
+.ai-input-column .ai-section-header h2 {
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: #123b5a !important;
+  letter-spacing: -0.025em;
+}
+
+.ai-input-column .ai-section-header p {
+  font-size: 12px !important;
+  color: #6b8292 !important;
+  max-width: 720px;
+}
+
+/* =========================================================
+   MAIN TASK CONTAINER
+   ========================================================= */
+
+.ai-task-shell {
+  min-height: 470px !important;
+  padding: 24px !important;
+  border: 1px solid #cbdde8 !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(145deg, #ffffff 0%, #f7fafc 100%) !important;
+  box-shadow:
+    0 10px 30px rgba(15, 55, 80, 0.08),
+    0 2px 5px rgba(15, 55, 80, 0.04) !important;
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+
+.ai-task-shell:hover {
+  box-shadow:
+    0 15px 38px rgba(15, 55, 80, 0.11),
+    0 3px 8px rgba(15, 55, 80, 0.05) !important;
+}
+
+/* =========================================================
+   TASK FORM INTERNAL AREA
+   ========================================================= */
+
+.ai-task-shell > div {
+  width: 100%;
+}
+
+/* Header inside TaskForm */
+.ai-task-shell h2,
+.ai-task-shell h3 {
+  color: #123b5a !important;
+}
+
+/* Make labels more official/readable */
+.ai-task-shell label {
+  color: #355d76 !important;
+  font-weight: 750 !important;
+}
+
+/* =========================================================
+   BIGGER INPUT / TEXTAREA
+   ========================================================= */
+
+.ai-task-shell textarea {
+  min-height: 155px !important;
+  width: 100% !important;
+  resize: vertical !important;
+  padding: 17px 18px !important;
+
+  border: 1px solid #a9c4d5 !important;
+  border-radius: 9px !important;
+
+  background: #ffffff !important;
+  color: #183b53 !important;
+
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+
+  box-shadow:
+    inset 0 1px 3px rgba(20, 55, 75, 0.04) !important;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background .2s ease !important;
+}
+
+.ai-task-shell textarea::placeholder {
+  color: #8296a5 !important;
+  opacity: 1 !important;
+}
+
+.ai-task-shell textarea:hover {
+  border-color: #6fa5c3 !important;
+}
+
+.ai-task-shell textarea:focus {
+  outline: none !important;
+  border-color: #1974a5 !important;
+  background: #ffffff !important;
+
+  box-shadow:
+    0 0 0 3px rgba(25, 116, 165, 0.10),
+    0 5px 15px rgba(25, 116, 165, 0.06) !important;
+}
+
+/* =========================================================
+   QUICK ACTIONS — GOVERNMENT SERVICE CARDS
+   ========================================================= */
+
+.ai-task-shell button {
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease,
+    background .18s ease !important;
+}
+
+/* Quick action buttons */
+.ai-task-shell button:not([type="submit"]) {
+  min-height: 42px !important;
+  padding: 9px 15px !important;
+
+  border: 1px solid #b9cfdd !important;
+  border-radius: 7px !important;
+
+  background: #ffffff !important;
+  color: #164b6d !important;
+
+  font-size: 11px !important;
+  font-weight: 750 !important;
+}
+
+.ai-task-shell button:not([type="submit"]):hover {
+  transform: translateY(-2px);
+  border-color: #3986ad !important;
+  background: #eef7fb !important;
+
+  box-shadow:
+    0 6px 15px rgba(25, 91, 125, 0.10) !important;
+}
+
+.ai-task-shell button:not([type="submit"]):active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   PRIMARY RUN TASK BUTTON
+   ========================================================= */
+
+.ai-task-shell button[type="submit"] {
+  min-height: 48px !important;
+  min-width: 155px !important;
+
+  padding: 0 22px !important;
+
+  border: 1px solid #075d87 !important;
+  border-radius: 7px !important;
+
+  background:
+    linear-gradient(135deg, #07547d, #147aa6) !important;
+
+  color: #ffffff !important;
+
+  font-size: 12px !important;
+  font-weight: 850 !important;
+  letter-spacing: .02em;
+
+  box-shadow:
+    0 6px 16px rgba(8, 84, 125, 0.22) !important;
+
+  cursor: pointer;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    background .2s ease !important;
+}
+
+.ai-task-shell button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  background:
+    linear-gradient(135deg, #064b71, #0e6d98) !important;
+
+  box-shadow:
+    0 9px 22px rgba(8, 84, 125, 0.28) !important;
+}
+
+.ai-task-shell button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ai-task-shell button[type="submit"]:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+/* =========================================================
+   FILE / ATTACH BUTTON
+   ========================================================= */
+
+.ai-task-shell input[type="file"] {
+  font-size: 10px;
+}
+
+.ai-task-shell input[type="file"]::file-selector-button {
+  margin-right: 10px;
+  padding: 8px 12px;
+
+  border: 1px solid #b9cfdd;
+  border-radius: 6px;
+
+  background: #f3f8fb;
+  color: #225572;
+
+  font-size: 10px;
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   QUICK ACTION GROUP SPACING
+   ========================================================= */
+
+.ai-task-shell button + button {
+  margin-left: 4px;
+}
+
+/* =========================================================
+   INTERACTIVE FIELD LABELS
+   ========================================================= */
+
+.ai-task-shell small,
+.ai-task-shell .helper-text {
+  color: #718896 !important;
+}
+
+/* =========================================================
+   SECURITY INDICATOR
+   ========================================================= */
+
+.ai-task-shell [class*="security"],
+.ai-task-shell [class*="secure"] {
+  color: #18734e;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .ai-task-shell {
+    min-height: auto !important;
+    padding: 18px !important;
+  }
+
+  .ai-task-shell textarea {
+    min-height: 135px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .ai-input-column .ai-section-header h2 {
+    font-size: 22px !important;
+  }
+
+  .ai-task-shell {
+    padding: 14px !important;
+  }
+
+  .ai-task-shell textarea {
+    min-height: 120px !important;
+    font-size: 14px !important;
+  }
+
+  .ai-task-shell button[type="submit"] {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   TARKAI MAIN MISSION CONSOLE
+   Premium Government Command-Center UI
+   ========================================================= */
+
+.ai-command-page,
+.ai-input-column {
+  position: relative;
+}
+
+/* Remove old section numbering */
+.ai-command-page [class*="section-kicker"],
+.ai-input-column > .ai-section-header > .section-kicker {
+  display: none !important;
+}
+
+/* =========================================================
+   PAGE HEADERS
+   ========================================================= */
+
+.ai-input-column .ai-section-header,
+.ai-trace-column .ai-section-header {
+  margin-bottom: 18px !important;
+}
+
+.ai-input-column .ai-section-header h2,
+.ai-trace-column .ai-section-header h2 {
+  color: #103b5b !important;
+  font-size: 27px !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.035em !important;
+}
+
+.ai-input-column .ai-section-header p,
+.ai-trace-column .ai-section-header p {
+  color: #6d8291 !important;
+  font-size: 12px !important;
+  line-height: 1.6 !important;
+}
+
+/* =========================================================
+   MAIN CARDS — POPPING EDGE EFFECT
+   ========================================================= */
+
+.ai-task-shell,
+.ai-trace-shell {
+  position: relative !important;
+
+  border: 1px solid #c7dce8 !important;
+  border-radius: 14px !important;
+
+  background:
+    linear-gradient(145deg, #ffffff 0%, #f7fafc 100%) !important;
+
+  box-shadow:
+    0 12px 30px rgba(15, 54, 78, 0.08),
+    0 2px 5px rgba(15, 54, 78, 0.04) !important;
+
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease !important;
+}
+
+.ai-task-shell:hover,
+.ai-trace-shell:hover {
+  transform: translateY(-2px);
+
+  border-color: #8eb7cd !important;
+
+  box-shadow:
+    0 18px 40px rgba(15, 54, 78, 0.13),
+    0 3px 8px rgba(15, 54, 78, 0.05) !important;
+}
+
+/* =========================================================
+   TASK INPUT CARD
+   ========================================================= */
+
+.ai-task-shell {
+  padding: 25px !important;
+  min-height: 500px !important;
+}
+
+/* Header separator */
+.ai-task-shell > div:first-child {
+  border-bottom-color: #d6e3eb !important;
+}
+
+/* Input title */
+.ai-task-shell h3,
+.ai-task-shell h2 {
+  color: #123c5a !important;
+  font-weight: 850 !important;
+}
+
+/* =========================================================
+   TEXTAREA — HERO ELEMENT
+   ========================================================= */
+
+.ai-task-shell textarea {
+  min-height: 190px !important;
+
+  width: 100% !important;
+
+  padding: 18px 19px !important;
+
+  border: 1.5px solid #9dbed2 !important;
+  border-radius: 11px !important;
+
+  background: #ffffff !important;
+
+  color: #163c55 !important;
+
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+
+  box-shadow:
+    inset 0 1px 3px rgba(13, 52, 75, .035),
+    0 1px 0 rgba(255,255,255,.8) !important;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease !important;
+}
+
+.ai-task-shell textarea:hover {
+  border-color: #5f99b9 !important;
+}
+
+.ai-task-shell textarea:focus {
+  outline: none !important;
+
+  border-color: #086b9a !important;
+
+  box-shadow:
+    0 0 0 4px rgba(8,107,154,.10),
+    0 8px 22px rgba(8,107,154,.08) !important;
+
+  transform: translateY(-1px);
+}
+
+.ai-task-shell textarea::placeholder {
+  color: #8298a7 !important;
+}
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.ai-task-shell button:not([type="submit"]) {
+  position: relative !important;
+
+  min-height: 46px !important;
+
+  padding: 10px 16px !important;
+
+  border: 1px solid #b9cfdd !important;
+  border-radius: 8px !important;
+
+  background: #ffffff !important;
+
+  color: #154b6c !important;
+
+  font-size: 11px !important;
+  font-weight: 800 !important;
+
+  box-shadow:
+    0 2px 5px rgba(20,60,85,.035) !important;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease,
+    box-shadow .18s ease !important;
+}
+
+.ai-task-shell button:not([type="submit"]):hover {
+  transform: translateY(-3px);
+
+  border-color: #2380aa !important;
+
+  background: #edf7fb !important;
+
+  box-shadow:
+    0 8px 18px rgba(24,102,139,.12) !important;
+}
+
+.ai-task-shell button:not([type="submit"]):active {
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   RUN TASK — PRIMARY ACTION
+   ========================================================= */
+
+.ai-task-shell button[type="submit"] {
+  position: relative !important;
+
+  min-width: 170px !important;
+  min-height: 52px !important;
+
+  padding: 0 24px !important;
+
+  border: 1px solid #075c87 !important;
+  border-radius: 9px !important;
+
+  background:
+    linear-gradient(135deg, #07557e 0%, #087aa7 100%) !important;
+
+  color: #ffffff !important;
+
+  font-size: 12px !important;
+  font-weight: 850 !important;
+
+  letter-spacing: .025em !important;
+
+  box-shadow:
+    0 9px 20px rgba(7,88,128,.22) !important;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease,
+    filter .2s ease !important;
+}
+
+.ai-task-shell button[type="submit"]:hover:not(:disabled) {
+  transform: translateY(-3px);
+
+  filter: brightness(1.05);
+
+  box-shadow:
+    0 14px 28px rgba(7,88,128,.30) !important;
+}
+
+.ai-task-shell button[type="submit"]:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.ai-task-shell button[type="submit"]:disabled {
+  opacity: .48 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* =========================================================
+   READY / MONITOR STATUS
+   ========================================================= */
+
+/* Strong visible Ready badge */
+.ai-trace-shell .status-badge,
+.ai-trace-shell .status-badge.nominal,
+.status-badge.nominal {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+
+  min-height: 32px !important;
+
+  padding: 6px 12px !important;
+
+  border: 1px solid #248354 !important;
+  border-radius: 7px !important;
+
+  background: #d8f3e3 !important;
+
+  color: #075c35 !important;
+
+  font-size: 10px !important;
+  font-weight: 900 !important;
+
+  box-shadow:
+    0 3px 8px rgba(24,120,75,.12) !important;
+
+  opacity: 1 !important;
+}
+
+/* Green status dot */
+.ai-trace-shell .status-badge.nominal svg,
+.status-badge.nominal svg {
+  color: #08753e !important;
+  opacity: 1 !important;
+}
+
+/* Monitor badge */
+.ai-trace-shell .status-badge:not(.nominal) {
+  border-color: #b5cad8 !important;
+  background: #f3f7fa !important;
+  color: #41667c !important;
+}
+
+/* =========================================================
+   EXECUTION TRACE
+   ========================================================= */
+
+.ai-trace-shell {
+  min-height: 500px !important;
+  padding: 18px !important;
+}
+
+.ai-trace-shell > div {
+  border-color: #d5e2e9 !important;
+}
+
+/* Execution header */
+.ai-trace-shell h3,
+.ai-trace-shell h2 {
+  color: #123d5a !important;
+  font-weight: 850 !important;
+}
+
+/* Empty trace state */
+.ai-trace-shell:has(.status-badge.nominal) {
+  background:
+    linear-gradient(145deg,#ffffff 0%,#f6fafc 100%) !important;
+}
+
+/* =========================================================
+   TRACE STEPS / COMPONENTS
+   ========================================================= */
+
+.ai-trace-shell [class*="trace"],
+.ai-trace-shell [class*="step"] {
+  transition:
+    background .18s ease,
+    border-color .18s ease,
+    transform .18s ease !important;
+}
+
+.ai-trace-shell [class*="trace"]:hover,
+.ai-trace-shell [class*="step"]:hover {
+  border-color: #9abed1 !important;
+  background: #f5fafc !important;
+}
+
+/* =========================================================
+   FILE ATTACHMENT
+   ========================================================= */
+
+.ai-task-shell input[type="file"]::file-selector-button {
+  padding: 9px 13px !important;
+
+  border: 1px solid #aec8d7 !important;
+  border-radius: 7px !important;
+
+  background: #f4f8fa !important;
+
+  color: #235775 !important;
+
+  font-size: 10px !important;
+  font-weight: 800 !important;
+
+  cursor: pointer;
+
+  transition: .18s ease;
+}
+
+.ai-task-shell input[type="file"]::file-selector-button:hover {
+  background: #e7f3f8 !important;
+  border-color: #3781a8 !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1050px) {
+  .ai-task-shell,
+  .ai-trace-shell {
+    min-height: 450px !important;
+  }
+}
+
+@media (max-width: 800px) {
+  .ai-task-shell {
+    padding: 18px !important;
+  }
+
+  .ai-task-shell textarea {
+    min-height: 150px !important;
+  }
+
+  .ai-task-shell button[type="submit"] {
+    width: 100% !important;
+  }
+}
+

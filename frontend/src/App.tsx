@@ -1,9 +1,10 @@
-﻿import React from 'react';
+import './styles/reference-pages.css';
+import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { TaskProvider } from './context/TaskContext';
-import { SystemTopbar } from './components/SystemTopbar';
-import { SidebarNav } from './components/SidebarNav';
+import { GovHeader } from './components/GovHeader';
+import { TopNav } from './components/TopNav';
 import { Footer } from './components/Footer';
 
 import { HomePage } from './pages/HomePage';
@@ -13,6 +14,7 @@ import { AgentReasoningPage } from './pages/AgentReasoningPage';
 import { ToolRegistryPage } from './pages/ToolRegistryPage';
 import { KnowledgeSearchPage } from './pages/KnowledgeSearchPage';
 import { DeliverablesPage } from './pages/DeliverablesPage';
+import { DeliverablePicker } from './components/DeliverablePicker';
 import { AirGapMonitorPage } from './pages/AirGapMonitorPage';
 import { ModelOperationsPage } from './pages/ModelOperationsPage';
 import { ApprovalGatePage } from './pages/ApprovalGatePage';
@@ -22,10 +24,10 @@ export const App: React.FC = () => {
     <TaskProvider>
       <BrowserRouter>
         <div className="app-container">
-          <SystemTopbar />
+          <GovHeader />
+          <TopNav />
           <div className="workbench-shell">
-            <SidebarNav />
-            <main className="main-viewport">
+            <main className="main-viewport" id="main-content">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/assistant" element={<AIAssistantPage />} />
@@ -33,7 +35,7 @@ export const App: React.FC = () => {
                 <Route path="/reasoning" element={<AgentReasoningPage />} />
                 <Route path="/tools" element={<ToolRegistryPage />} />
                 <Route path="/knowledge" element={<KnowledgeSearchPage />} />
-                <Route path="/deliverables" element={<DeliverablesPage />} />
+                <Route path="/deliverables" element={<><DeliverablesPage /><DeliverablePicker /></>} />
                 <Route path="/air-gap" element={<AirGapMonitorPage />} />
                 <Route path="/operations" element={<ModelOperationsPage />} />
                 <Route path="/approvals" element={<ApprovalGatePage />} />

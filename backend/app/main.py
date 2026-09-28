@@ -20,7 +20,6 @@ app = FastAPI(
     version="2.0.0"
 )
 
-# Enable CORS for React frontend (Vite port 5173 / 3000)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,7 +28,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Start background network monitor on startup
 @app.on_event("startup")
 def startup_event():
     network_monitor.start_monitoring(interval_seconds=3)
@@ -40,18 +38,18 @@ def startup_event():
         details={"profile": model_registry.PROFILE_NAME}
     )
 
-# Request Pydantic Schemas
 class TaskRequest(BaseModel):
     task_description: str
     files: Optional[List[str]] = []
+    want_deliverable: bool = False
+    desired_format: Optional[str] = "auto"
 
 class ReviewDecisionRequest(BaseModel):
-    status: str # "approved" or "rejected"
+    status: str
     comment: Optional[str] = ""
 
 from app.model_router import model_router
 
-# Feature 1: Model Registry & Task Model Router APIs
 @app.get("/api/model-registry")
 def get_model_registry(user: UserContext = Depends(get_current_user)):
     return model_registry.get_summary()
@@ -87,15 +85,12 @@ def verify_code(req: CodeVerifyRequest, user: UserContext = Depends(require_role
     )
     return res
 
-
-
-# Feature 6: In-Process Task Queue API
 @app.post("/api/task")
 def create_task(req: TaskRequest, user: UserContext = Depends(require_roles(["engineer", "admin"]))):
     if not req.task_description.strip():
         raise HTTPException(status_code=400, detail="Task description cannot be empty.")
 
-    job_info = task_queue.submit_job(req.task_description, req.files or [])
+    job_info = task_queue.submit_job(req.task_description, req.files or [], req.want_deliverable, req.desired_format)
     return job_info
 
 @app.get("/api/task/{task_id}/status")
@@ -112,7 +107,6 @@ def get_task_result(task_id: str, user: UserContext = Depends(get_current_user))
         raise HTTPException(status_code=404, detail=f"Task ID {task_id} not found.")
     return result_info
 
-# Feature 2: Human Approval Gate APIs
 @app.get("/api/reviews")
 def list_review_drafts(status: Optional[str] = None, user: UserContext = Depends(get_current_user)):
     return approval_gate.list_drafts(status_filter=status)
@@ -140,7 +134,6 @@ def reject_draft(review_id: str, req: Optional[ReviewDecisionRequest] = None, us
         raise HTTPException(status_code=404, detail=f"Review draft {review_id} not found.")
     return updated
 
-# Feature 3: Confidence & Logging APIs
 @app.get("/api/confidence/stats")
 def get_confidence_stats(user: UserContext = Depends(get_current_user)):
     return confidence_logger.get_stats()
@@ -149,12 +142,10 @@ def get_confidence_stats(user: UserContext = Depends(get_current_user)):
 def get_confidence_logs(limit: int = 50, user: UserContext = Depends(get_current_user)):
     return confidence_logger.get_recent_logs(limit=limit)
 
-# Feature 5: Audit Log APIs
 @app.get("/api/audit/logs")
 def get_audit_logs(limit: int = 50, user: UserContext = Depends(get_current_user)):
     return audit_logger.get_logs(limit=limit)
 
-# Existing Utility & Monitoring Endpoints
 @app.get("/monitor/status")
 def get_airgap_status():
     return network_monitor.get_status()
@@ -163,7 +154,7 @@ def get_airgap_status():
 def upload_file(file: UploadFile = File(...), user: UserContext = Depends(require_roles(["engineer", "admin"]))):
     uploads_dir = settings.UPLOADS_DIR
     target_path = uploads_dir / file.filename
-    
+
     try:
         with open(target_path, "wb") as buffer:
             buffer.write(file.file.read())
@@ -188,7 +179,7 @@ def upload_file(file: UploadFile = File(...), user: UserContext = Depends(requir
 def download_deliverable(filename: str):
     outputs_dir = settings.OUTPUTS_DIR
     target = (outputs_dir / filename).resolve()
-    
+
     if not target.exists() or not str(target).startswith(str(outputs_dir.resolve())):
         raise HTTPException(status_code=404, detail="Requested deliverable file not found.")
 
@@ -198,7 +189,7 @@ def download_deliverable(filename: str):
         status="DOWNLOADED",
         details={"path": str(target)}
     )
-    
+
     return FileResponse(path=str(target), filename=filename)
 
 @app.get("/api/health")
@@ -220,8 +211,198 @@ from pathlib import Path
 frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 if frontend_dist.exists():
     app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="static_assets")
-    
+
     @app.get("/")
     def serve_ui():
         return FileResponse(str(frontend_dist / "index.html"))
 
+@app.get("/api/tools/status")
+def tools_status():
+    """Return the actual backend tool registry and availability."""
+    tools = []
+
+    # File I/O
+    try:
+        from app.tools.file_io import read_file, write_file
+        tools.append({
+            "name": "file_io",
+            "status": "READY",
+            "module": "backend/app/tools/file_io.py",
+            "functions": ["read_file", "write_file"],
+            "details": "Sandboxed file operations"
+        })
+    except Exception as e:
+        tools.append({
+            "name": "file_io",
+            "status": "ERROR",
+            "module": "backend/app/tools/file_io.py",
+            "details": str(e)
+        })
+
+    # Code Sandbox
+    try:
+        from app.tools.code_sandbox import execute_code
+        tools.append({
+            "name": "code_sandbox",
+            "status": "READY",
+            "module": "backend/app/tools/code_sandbox.py",
+            "functions": ["execute_code"],
+            "details": "Isolated code execution"
+        })
+    except Exception as e:
+        tools.append({
+            "name": "code_sandbox",
+            "status": "ERROR",
+            "module": "backend/app/tools/code_sandbox.py",
+            "details": str(e)
+        })
+
+    # Document Search / RAG
+    try:
+        from app.tools.doc_search import search_knowledge_base
+        tools.append({
+            "name": "doc_search",
+            "status": "READY",
+            "module": "backend/app/tools/doc_search.py",
+            "functions": ["search_knowledge_base"],
+            "details": "IntelliMesh RAG: Qwen3-Embedding + BM25 + RRF"
+        })
+    except Exception as e:
+        tools.append({
+            "name": "doc_search",
+            "status": "ERROR",
+            "module": "backend/app/tools/doc_search.py",
+            "details": str(e)
+        })
+
+    # OCR
+    try:
+        from app.tools.ocr_tool import extract_text
+        tools.append({
+            "name": "ocr_tool",
+            "status": "READY",
+            "module": "backend/app/tools/ocr_tool.py",
+            "functions": ["extract_text"],
+            "details": "PaddleOCR + pytesseract + pypdf fallback"
+        })
+    except Exception as e:
+        tools.append({
+            "name": "ocr_tool",
+            "status": "ERROR",
+            "module": "backend/app/tools/ocr_tool.py",
+            "details": str(e)
+        })
+
+    # Vision
+    try:
+        from app.tools.vision_tool import describe_image
+        tools.append({
+            "name": "vision_tool",
+            "status": "READY",
+            "module": "backend/app/tools/vision_tool.py",
+            "functions": ["describe_image"],
+            "details": f"Ollama vision model: {settings.VISION_MODEL}"
+        })
+    except Exception as e:
+        tools.append({
+            "name": "vision_tool",
+            "status": "ERROR",
+            "module": "backend/app/tools/vision_tool.py",
+            "details": str(e)
+        })
+
+    # Output generator
+    try:
+        from app.output_generator import generate_docx, generate_pptx, generate_xlsx
+        tools.append({
+            "name": "output_generator",
+            "status": "READY",
+            "module": "backend/app/output_generator.py",
+            "functions": ["generate_docx", "generate_pptx", "generate_xlsx"],
+            "details": "DOCX + PPTX + XLSX generation"
+        })
+    except Exception as e:
+        tools.append({
+            "name": "output_generator",
+            "status": "ERROR",
+            "module": "backend/app/output_generator.py",
+            "details": str(e)
+        })
+
+    ready = sum(1 for tool in tools if tool["status"] == "READY")
+
+    return {
+        "status": "online",
+        "count": len(tools),
+        "ready": ready,
+        "tools": tools
+    }
+
+@app.post("/api/knowledge/search")
+def knowledge_search(payload: dict):
+    import re
+
+    query = str(payload.get("query", "")).strip()
+
+    try:
+        top_k = int(payload.get("top_k", 4))
+    except (TypeError, ValueError):
+        top_k = 4
+
+    if not query:
+        return {
+            "status": "error",
+            "query": "",
+            "count": 0,
+            "results": [],
+            "message": "Query is required."
+        }
+
+    top_k = max(1, min(top_k, 10))
+
+    try:
+        from app.tools.doc_search import search_knowledge_base
+
+        raw_results = search_knowledge_base(query, top_k=top_k)
+
+        if isinstance(raw_results, list):
+            results = raw_results
+            count = len(results)
+
+        elif isinstance(raw_results, str):
+            results = raw_results
+            count = len(re.findall(r"--- Passage \d+", raw_results))
+
+        else:
+            results = raw_results
+            count = 0
+
+        return {
+            "status": "success",
+            "query": query,
+            "count": count,
+            "results": results
+        }
+
+    except Exception as e:
+        return {
+            "status": "error",
+            "query": query,
+            "count": 0,
+            "results": [],
+            "message": str(e)
+        }
+
+
+class DeliverableFromResultRequest(BaseModel):
+    format: str
+
+
+@app.post("/api/task/{task_id}/deliverable")
+def create_deliverable_from_result(task_id: str, req: DeliverableFromResultRequest, user: UserContext = Depends(require_roles(["engineer", "admin"]))):
+    try:
+        return task_queue.build_deliverable(task_id, req.format)
+    except LookupError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

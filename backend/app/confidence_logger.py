@@ -1,4 +1,4 @@
-import json
+﻿import json
 import sqlite3
 import threading
 from datetime import datetime
@@ -85,6 +85,21 @@ class ConfidenceLogger:
             "low_confidence_pct": low_conf_pct,
             "flagged_count": flagged_count
         }
+
+    def has_low_confidence_for_job(self, job_id: str) -> bool:
+        """Check whether ANY logged OCR/vision call for this job_id was
+        flagged as low confidence. Used to decide whether a generated
+        deliverable requires mandatory human review before finalization."""
+        with self.lock:
+            conn = sqlite3.connect(DB_FILE)
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT COUNT(*) FROM confidence_logs WHERE job_id = ? AND low_confidence_flag = 1",
+                (job_id,)
+            )
+            row = cursor.fetchone()
+            conn.close()
+        return bool(row and row[0] > 0)
 
     def get_recent_logs(self, limit: int = 50) -> List[Dict[str, Any]]:
         with self.lock:

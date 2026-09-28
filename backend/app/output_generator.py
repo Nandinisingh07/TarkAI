@@ -170,13 +170,48 @@ def generate_xlsx(data: Union[str, dict], filename_prefix: str = "DataSheet") ->
     wb.save(str(filepath))
     return filepath
 
+def generate_pdf(content, filename_prefix: str = "Report") -> Path:
+    """Generates a PDF report (.pdf) using reportlab."""
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from xml.sax.saxutils import escape
+
+    outputs_dir = settings.OUTPUTS_DIR
+    filename = f"{filename_prefix}_{uuid.uuid4().hex[:6]}.pdf"
+    filepath = outputs_dir / filename
+
+    styles = getSampleStyleSheet()
+    story = [
+        Paragraph("SOVEREIGN INDUSTRIAL WORKBENCH DELIVERABLE", styles["Title"]),
+        Paragraph("Air-Gapped Confidential Operations Report", styles["Italic"]),
+        Spacer(1, 14),
+    ]
+    for line in str(content).split("\n"):
+        s = line.strip()
+        if not s:
+            story.append(Spacer(1, 6))
+        elif s.startswith("### "):
+            story.append(Paragraph(escape(s[4:]), styles["Heading3"]))
+        elif s.startswith("## "):
+            story.append(Paragraph(escape(s[3:]), styles["Heading2"]))
+        elif s.startswith("# "):
+            story.append(Paragraph(escape(s[2:]), styles["Heading1"]))
+        elif s.startswith("- ") or s.startswith("* "):
+            story.append(Paragraph("&bull; " + escape(s[2:]), styles["BodyText"]))
+        else:
+            story.append(Paragraph(escape(s), styles["BodyText"]))
+
+    SimpleDocTemplate(str(filepath), pagesize=A4, leftMargin=50, rightMargin=50, topMargin=50, bottomMargin=50).build(story)
+    return filepath
+
 def generate_deliverable(task_id: str, format_type: str, content: Any) -> Optional[Dict[str, str]]:
     """
     Main deliverable dispatcher.
     Returns dictionary with download URL and file metadata if deliverable created.
     """
     fmt = str(format_type).strip().lower()
-    if fmt not in ["docx", "pptx", "xlsx"]:
+    if fmt not in ["docx", "pptx", "xlsx", "pdf"]:
         return None
 
     try:
@@ -184,6 +219,8 @@ def generate_deliverable(task_id: str, format_type: str, content: Any) -> Option
             path = generate_docx(content, filename_prefix=f"Task_{task_id[:6]}")
         elif fmt == "pptx":
             path = generate_pptx(content, filename_prefix=f"Task_{task_id[:6]}")
+        elif fmt == "pdf":
+            path = generate_pdf(content, filename_prefix=f"Task_{task_id[:6]}")
         elif fmt == "xlsx":
             path = generate_xlsx(content, filename_prefix=f"Task_{task_id[:6]}")
         else:
@@ -197,3 +234,36 @@ def generate_deliverable(task_id: str, format_type: str, content: Any) -> Option
     except Exception as e:
         print(f"Error generating {fmt} deliverable: {e}")
         return None
+
+
+# ---------------------------------------------------------------------------
+# Output format resolution: dropdown choice wins, otherwise detect from prompt
+# ---------------------------------------------------------------------------
+import re as _re
+
+_FORMAT_PATTERNS = {
+    "docx": r"\b(docx|word document|word doc|word file|ms word|microsoft word|in word)\b",
+    "pptx": r"\b(pptx|ppt|powerpoint|power point|slide deck|slides|presentation)\b",
+    "xlsx": r"\b(xlsx|excel|spreadsheet|workbook)\b",
+}
+
+_FORMAT_ALIASES = {
+    "word": "docx", "doc": "docx", "docx": "docx",
+    "ppt": "pptx", "powerpoint": "pptx", "pptx": "pptx",
+    "excel": "xlsx", "spreadsheet": "xlsx", "xlsx": "xlsx",
+}
+
+def detect_format_from_text(text):
+    text = (text or "").lower()
+    best, best_pos = None, None
+    for fmt, pattern in _FORMAT_PATTERNS.items():
+        m = _re.search(pattern, text)
+        if m and (best_pos is None or m.start() < best_pos):
+            best, best_pos = fmt, m.start()
+    return best
+
+def resolve_output_format(desired, task_description):
+    d = str(desired or "").strip().lower()
+    if d in _FORMAT_ALIASES:
+        return _FORMAT_ALIASES[d]
+    return detect_format_from_text(task_description)

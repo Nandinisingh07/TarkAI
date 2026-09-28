@@ -2,16 +2,34 @@ import React from 'react';
 import { Shield, Lock, Server } from 'lucide-react';
 
 export const Footer: React.FC = () => {
+  const lastUpdated = new Date().toISOString().slice(0, 10);
+
   return (
-    <footer style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'var(--text-secondary)', fontSize: '11px', fontFamily: 'var(--font-mono)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Shield size={14} color="var(--accent-amber)" />
-        <span style={{ color: 'var(--text-primary)' }}>SOVEREIGN INDUSTRIAL AI WORKBENCH (SIH PS26117)</span>
+    <footer className="site-footer-gov">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Shield size={14} color="#FF9933" />
+          <span style={{ color: '#fff', fontWeight: 600 }}>
+            Sovereign On-Premise Agentic AI Workbench — MRPL (SIH PS26117)
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <span><Lock size={12} style={{ display: 'inline', marginRight: 4 }} /> Air-Gapped Deployment</span>
+          <span><Server size={12} style={{ display: 'inline', marginRight: 4 }} /> Local Ollama Inference</span>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px' }}>
-        <span><Lock size={12} style={{ display: 'inline', marginRight: '4px' }} /> AIR-GAPPED CONTROL ROOM</span>
-        <span><Server size={12} style={{ display: 'inline', marginRight: '4px' }} /> LOCAL OLLAMA INFERENCE</span>
+      <div className="footer-links">
+        <a href="#">Sitemap</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Accessibility Statement</a>
+        <a href="#">Copyright Policy</a>
+      </div>
+
+      <div style={{ fontSize: '11px', opacity: 0.7 }}>
+        Content owned and maintained by MRPL &nbsp;•&nbsp; Last Updated: {lastUpdated} &nbsp;•&nbsp;
+        This site conforms to GIGW 3.0 guidelines
       </div>
     </footer>
   );

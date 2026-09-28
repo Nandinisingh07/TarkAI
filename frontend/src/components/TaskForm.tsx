@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Play, Upload, FileText, Sparkles, Shield, BookOpen, FileSpreadsheet, Calculator } from 'lucide-react';
-import { uploadFile } from '../services/api';
+import { Play, Square, Upload, FileText, Sparkles, Shield, BookOpen, FileSpreadsheet, Calculator, FileCheck2 } from 'lucide-react';
+import { uploadFile, setDesiredFormat } from '../services/api';
+import { useTaskContext } from '../context/TaskContext';
 
 interface Props {
   onSubmit: (prompt: string, files: string[]) => void;
@@ -8,9 +9,11 @@ interface Props {
 }
 
 export const TaskForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
+  const { wantDeliverable, setWantDeliverable, cancelTask } = useTaskContext();
   const [prompt, setPrompt] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [format, setFormat] = useState("auto");
 
   const quickActions = [
     { label: "Draft Inspection SOP", prompt: "Draft a refinery boiler safety inspection SOP document in docx format based on SOP-302.", icon: BookOpen },
@@ -35,7 +38,11 @@ export const TaskForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prompt.trim() || isLoading) return;
+    if (isLoading) {
+      cancelTask();
+      return;
+    }
+    if (!prompt.trim()) return;
     onSubmit(prompt, uploadedFiles);
   };
 
@@ -84,6 +91,55 @@ export const TaskForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
           </div>
         </div>
 
+        <label
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            cursor: isLoading ? 'default' : 'pointer',
+            padding: '10px 12px',
+            borderRadius: '8px',
+            background: wantDeliverable ? 'rgba(37, 99, 235, 0.08)' : 'var(--bg-input)',
+            border: `1px solid ${wantDeliverable ? 'var(--border-accent)' : 'var(--border-subtle)'}`,
+            transition: 'all 0.15s ease',
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={wantDeliverable}
+            onChange={(e) => setWantDeliverable(e.target.checked)}
+            disabled={isLoading}
+            style={{ width: '16px', height: '16px', accentColor: 'var(--accent-blue)' }}
+          />
+          <FileCheck2 size={16} color={wantDeliverable ? 'var(--accent-blue)' : 'var(--text-muted)'} />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: wantDeliverable ? 'var(--accent-blue)' : 'var(--text-secondary)' }}>
+            Generate Deliverable Document for this task
+          </span>
+          <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: 'auto' }}>
+            {wantDeliverable ? 'Will create a reviewable file' : 'Answer only, no file'}
+          </span>
+        </label>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Output format</span>
+          <select
+            className="cmd-input"
+            style={{ width: 'auto', padding: '6px 10px' }}
+            value={format}
+            disabled={isLoading}
+            onChange={(e) => {
+              const v = e.target.value;
+              setFormat(v);
+              setDesiredFormat(v);
+              if (v !== 'auto') setWantDeliverable(true);
+            }}
+          >
+            <option value="auto">Auto (detect from prompt)</option>
+            <option value="docx">Word (.docx)</option>
+            <option value="pptx">PowerPoint (.pptx)</option>
+            <option value="xlsx">Excel (.xlsx)</option>
+          </select>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap', paddingTop: '4px' }}>
           <label className="btn-outline" style={{ cursor: 'pointer', margin: 0 }}>
             <input type="file" onChange={handleFileUpload} style={{ display: 'none' }} disabled={isLoading || isUploading} />
@@ -91,9 +147,13 @@ export const TaskForm: React.FC<Props> = ({ onSubmit, isLoading }) => {
             <span>{isUploading ? 'Uploading file...' : 'Attach Technical File / Log'}</span>
           </label>
 
-          <button type="submit" className="btn-blue" disabled={!prompt.trim() || isLoading}>
-            <Play size={14} />
-            <span>{isLoading ? 'Processing Task...' : 'Run Task'}</span>
+          <button
+            type="submit"
+            className={isLoading ? 'btn-stop' : 'btn-blue'}
+            disabled={!isLoading && !prompt.trim()}
+          >
+            {isLoading ? <Square size={14} /> : <Play size={14} />}
+            <span>{isLoading ? 'Stop Task' : 'Run Task'}</span>
           </button>
         </div>
 

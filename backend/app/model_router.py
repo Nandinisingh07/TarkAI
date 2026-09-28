@@ -11,8 +11,11 @@ from app.audit_logger import audit_logger
 
 STAGE1_VISION_EXTENSIONS = [".jpg", ".jpeg", ".png", ".pdf", ".bmp", ".tiff", ".webp"]
 STAGE1_CODE_KEYWORDS = [
-    "debug", "write a function", "fix this code", "fix bug", "python script",
-    "def ", "import ", "const ", "class ", "syntax error", "traceback", "exception"
+    "debug", "write a function", "write a python function", "write a script",
+    "write a python script", "fix this code", "fix bug", "python script",
+    "def ", "import ", "const ", "class ", "syntax error", "traceback", "exception",
+    "csv", "dataset", "standard deviation", "flag rows", "calculate the mean",
+    "calculate the average", "anomaly", "outlier"
 ]
 STAGE1_CODE_EXTENSIONS = [".py", ".js", ".ts", ".jsx", ".tsx", ".sh", ".sql", ".cpp", ".java"]
 STAGE1_DOC_KEYWORDS = [
@@ -45,7 +48,7 @@ class ModelRouter:
                     "selected_model": settings.VISION_MODEL,
                     "confidence": 1.0
                 }
-        
+
         if any(k in text_lower for k in ["scanned", "ocr", "photo of", "image of", "diagram png"]):
             return {
                 "matched_stage": "stage1",
@@ -131,11 +134,10 @@ JSON:"""
         matched_signal = f"LLM Tie-Breaker fallback ({general_model})"
 
         try:
-            with httpx.Client(timeout=6.0) as client:
+            with httpx.Client(timeout=15.0) as client:
                 resp = client.post(ollama_url, json=payload)
                 if resp.status_code == 200:
                     raw_text = resp.json().get("response", "").strip()
-                    # JSON parsing with regex extraction fallback
                     json_match = re.search(r"\{.*\}", raw_text, re.DOTALL)
                     if json_match:
                         parsed = json.loads(json_match.group(0))
@@ -148,7 +150,6 @@ JSON:"""
         except Exception as e:
             matched_signal = f"Stage 2 LLM Tie-Breaker (parse fallback: {str(e)})"
 
-        # Model mapping
         if task_type == "coding":
             selected_model = settings.CODER_MODEL
         elif task_type == "vision":
@@ -169,10 +170,8 @@ JSON:"""
         settings.reload()
         model_registry.reload()
 
-        # Stage 1: Deterministic evaluation
         decision = cls._evaluate_stage1(task_description, attached_files=attached_files)
-        
-        # Stage 2: LLM Tie-breaker if Stage 1 is ambiguous
+
         if not decision:
             decision = cls._evaluate_stage2(task_description)
 

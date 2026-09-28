@@ -1,44 +1,25 @@
-﻿cd "C:\Users\Nandini singh\Desktop\ON PREMISE"
-
-@"
-# Python
+node_modules/
 __pycache__/
 *.pyc
-*.pyo
-venv/
 .venv/
-env/
-
-# Node
-node_modules/
-frontend/dist/
-frontend/.vite/
-
-# Runtime / local data
-network_audit.log
-data/sandbox/
-backend/data/uploads/
-uploads/
-*.db
-*.sqlite3
-
-# Env / secrets
+venv/
 .env
-.env.local
-
-# OS / editor
-.vscode/
-.idea/
+*.log
+*.bak
+*.tmp
+dist/
+backups/
+backend/outputs/*
+!backend/outputs/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep
+backend/data/chroma_db/
+backend/data/*.db
+logs/
+*.db
 Thumbs.db
 .DS_Store
-
-# Model weights - too large for git
 data/models/
-*.bin
-*.safetensors
 
-# ChromaDB persistent storage
-**/chroma_db/
-**/tarkai_kb_bge_m3/
-**/*.parquet
-"@ | Set-Content -Encoding ASCII .gitignore
+backend/data/sandbox/*
+!backend/data/sandbox/.gitkeep

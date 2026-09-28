@@ -1,6 +1,6 @@
-import { 
-  AirGapStatusData, 
-  TaskStatusResponse, 
+import {
+  AirGapStatusData,
+  TaskStatusResponse,
   TaskResultData,
   ModelRegistrySummary,
   ReviewDraft,
@@ -14,6 +14,12 @@ let currentUserRole = 'admin';
 
 export function setUserRole(role: 'admin' | 'engineer' | 'viewer') {
   currentUserRole = role;
+}
+
+let currentDesiredFormat = "auto";
+
+export function setDesiredFormat(fmt: string) {
+  currentDesiredFormat = fmt;
 }
 
 export function getUserRole(): string {
@@ -39,11 +45,11 @@ export async function fetchModelRegistry(): Promise<ModelRegistrySummary> {
   return res.json();
 }
 
-export async function submitTask(taskDescription: string, files: string[] = []): Promise<{ task_id: string; model_used: string; routing_reason: string }> {
+export async function submitTask(taskDescription: string, files: string[] = [], wantDeliverable: boolean = false): Promise<{ task_id: string; model_used: string; routing_reason: string }> {
   const res = await fetch(`${API_BASE}/api/task`, {
     method: 'POST',
     headers: getHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify({ task_description: taskDescription, files }),
+    body: JSON.stringify({ task_description: taskDescription, files, want_deliverable: wantDeliverable, desired_format: currentDesiredFormat }),
   });
   if (!res.ok) {
     const err = await res.json();
@@ -127,3 +133,18 @@ export async function uploadFile(file: File): Promise<{ filename: string; saved_
   return res.json();
 }
 
+export async function createDeliverable(
+  taskId: string,
+  format: string
+): Promise<{ format: string; filename: string; download_url: string; review_id?: string; needs_review?: boolean }> {
+  const res = await fetch(`${API_BASE}/api/task/${taskId}/deliverable`, {
+    method: 'POST',
+    headers: getHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify({ format }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({} as any));
+    throw new Error(err.detail || 'Failed to create deliverable');
+  }
+  return res.json();
+}

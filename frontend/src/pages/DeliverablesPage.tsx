@@ -1,86 +1,168 @@
 ﻿import React from 'react';
-import { FileCheck, Code2, FileText, Presentation, Table, Download, CheckCircle2 } from 'lucide-react';
+import {
+  FileCheck,
+  FileText,
+  Presentation,
+  Table,
+  CheckCircle2,
+  FolderOpen,
+  Download,
+  ArrowRight,
+} from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
 import { ResultView } from '../components/ResultView';
+import '../styles/workspace-reference.css';
 
 export const DeliverablesPage: React.FC = () => {
   const { resultData, deliverable } = useTaskContext();
+  const hasOutput = Boolean(resultData || deliverable);
+
+  const formats = [
+    {
+      no: '01',
+      code: 'DOCX',
+      title: 'Word Report',
+      icon: FileText,
+      description: 'Structured reports generated from the local AI workflow.',
+      engine: 'python-docx',
+    },
+    {
+      no: '02',
+      code: 'PPTX',
+      title: 'Presentation',
+      icon: Presentation,
+      description: 'Presentation-ready slides from structured agent output.',
+      engine: 'python-pptx',
+    },
+    {
+      no: '03',
+      code: 'XLSX',
+      title: 'Spreadsheet',
+      icon: Table,
+      description: 'Structured workbooks with formatted data and columns.',
+      engine: 'openpyxl',
+    },
+  ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
-      {/* Hero Header */}
-      <div className="hero-section">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-          <FileCheck size={28} color="var(--accent-cyan)" />
-          <h2 className="hero-title">Government Document Generation Workspace</h2>
-        </div>
-        <p className="hero-desc">
-          Professional deliverable document production workspace. Converts the agent's <code>FINAL_ANSWER</code> specifications into styled Word (<code>.docx</code>), PowerPoint (<code>.pptx</code>), and Excel (<code>.xlsx</code>) files saved in <code>outputs/</code> with direct download links.
-        </p>
-      </div>
+    <main className="workspace-reference-page">
+      <div className="workspace-shell">
 
-      {/* Technical Implementation Reference */}
-      <div className="card">
-        <div className="card-title">
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Code2 size={18} color="var(--accent-cyan)" /> Technical Implementation Reference
-          </span>
-          <span className="badge badge-secure">R5 VERIFIED LIVE</span>
+        <div className="workspace-eyebrow">
+          Workspace / Deliverables
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-          <div>📁 <strong>Output Generator Engine:</strong> <code>backend/app/output_generator.py</code></div>
-          <div>📁 <strong>Deliverables Folder:</strong> <code>outputs/</code></div>
-          <div>📥 <strong>Download Route:</strong> <code>GET /outputs/{'{filename}'}</code></div>
-          <div>📦 <strong>Libraries Used:</strong> <code>python-docx</code>, <code>python-pptx</code>, <code>openpyxl</code></div>
-        </div>
-      </div>
 
-      {/* Document Formats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
-        <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <FileText size={22} color="var(--accent-cyan)" />
-            <h3 style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 700 }}>Word Report (.docx)</h3>
+        <header className="workspace-header">
+          <div>
+            <h1>Deliverables</h1>
+            <p>Generated files and local output workspace for completed AI tasks.</p>
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            Generated via <code>python-docx</code> with executive title banners, styled section headers, formatted paragraphs, and bullet points.
-          </p>
-        </div>
 
-        <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Presentation size={22} color="var(--accent-amber)" />
-            <h3 style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 700 }}>PowerPoint Slide (.pptx)</h3>
+          <div className="workspace-environment">
+            <span className="workspace-environment-dot" />
+            Local output workspace
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            Generated via <code>python-pptx</code> from JSON slide specifications with title slide layouts and bullet point frames.
-          </p>
-        </div>
+        </header>
 
-        <div className="card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', background: 'var(--bg-panel-elevated)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-            <Table size={22} color="var(--accent-emerald)" />
-            <h3 style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 700 }}>Excel Spreadsheet (.xlsx)</h3>
+        <section className="workspace-format-grid">
+          {formats.map((format) => {
+            const Icon = format.icon;
+
+            return (
+              <article className="workspace-format-card" key={format.code}>
+                <div className="workspace-format-top">
+                  <Icon size={22} color="#0b4d80" />
+                  <span className="workspace-format-code">
+                    {format.no} · {format.code}
+                  </span>
+                </div>
+
+                <h3>{format.title}</h3>
+
+                <p>{format.description}</p>
+
+                <div className="workspace-format-footer">
+                  <span>{format.engine}</span>
+                  <CheckCircle2 size={15} color="#14763d" />
+                </div>
+              </article>
+            );
+          })}
+        </section>
+
+        <section className="workspace-panel" style={{ marginTop: 18 }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            gap: 18,
+          }}>
+            <div>
+              <div className="workspace-panel-title">
+                <FolderOpen size={17} style={{ verticalAlign: 'middle', marginRight: 7 }} />
+                Live Deliverable Workspace
+              </div>
+
+              <div className="workspace-panel-subtitle">
+                Generated outputs are shown here when an AI task produces a result.
+              </div>
+            </div>
+
+            {hasOutput && (
+              <span className="workspace-live">
+                <span className="workspace-live-dot" />
+                READY
+              </span>
+            )}
           </div>
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            Generated via <code>openpyxl</code> with styled header fills, thin cell borders, aligned data rows, and dynamic column widths.
-          </p>
-        </div>
+
+          <div style={{ marginTop: 20 }}>
+            {resultData ? (
+              <ResultView
+                result={resultData}
+                deliverable={deliverable}
+              />
+            ) : (
+              <div className="workspace-empty">
+                <Download size={24} style={{ marginBottom: 10 }} />
+                <div style={{ fontWeight: 700, color: '#2d5272', marginBottom: 6 }}>
+                  No deliverable yet
+                </div>
+                <div>
+                  Submit a task from the AI Assistant and the generated result will appear here.
+                </div>
+
+                <div style={{ marginTop: 14, color: '#6d879f', fontSize: 12 }}>
+                  Example: Draft Boiler Safety SOP docx
+                  <ArrowRight size={14} style={{ verticalAlign: 'middle', marginLeft: 5 }} />
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="workspace-panel">
+          <div className="workspace-panel-title">Local output implementation</div>
+
+          <div className="workspace-technical" style={{ marginTop: 16 }}>
+            <div className="workspace-tech-item">
+              <span>GENERATOR</span>
+              <code>backend/app/output_generator.py</code>
+            </div>
+
+            <div className="workspace-tech-item">
+              <span>OUTPUT LOCATION</span>
+              <code>outputs/</code>
+            </div>
+
+            <div className="workspace-tech-item">
+              <span>DOWNLOAD ROUTE</span>
+              <code>GET /outputs/filename</code>
+            </div>
+          </div>
+        </section>
+
       </div>
-
-      {/* Embedded Live Component */}
-      <div className="card">
-        <div className="card-title">
-          <span>Embedded Live R5 Deliverable Workspace</span>
-        </div>
-        {resultData ? (
-          <ResultView result={resultData} deliverable={deliverable} />
-        ) : (
-          <div style={{ padding: '2.5rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            No active deliverable generated yet. Submit an industrial prompt on the Main Landing Page (e.g. "Draft Boiler Safety SOP docx") to generate a downloadable document.
-          </div>
-        )}
-      </div>
-    </div>
+    </main>
   );
 };

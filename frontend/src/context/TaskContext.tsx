@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import { submitTask, getTaskStatus, getTaskResult } from '../services/api';
 import { TraceStep, DeliverableInfo } from '../types';
 
@@ -12,7 +12,10 @@ interface TaskContextType {
   resultData: any;
   deliverable: DeliverableInfo | undefined;
   isLoading: boolean;
+  wantDeliverable: boolean;
+  setWantDeliverable: (v: boolean) => void;
   handleTaskSubmit: (prompt: string, files: string[]) => Promise<void>;
+  cancelTask: () => void;
   resetTask: () => void;
 }
 
@@ -28,16 +31,20 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [resultData, setResultData] = useState<any>(null);
   const [deliverable, setDeliverable] = useState<DeliverableInfo | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [wantDeliverable, setWantDeliverable] = useState<boolean>(false);
 
-    // Poll active task status
+  // When true, polling results are ignored (user pressed Stop).
+  const cancelledRef = useRef<boolean>(false);
+
   useEffect(() => {
     if (!taskId || taskStatus === 'completed' || taskStatus === 'failed') return;
 
     let isMounted = true;
     const pollInterval = setInterval(async () => {
+      if (cancelledRef.current) return;
       try {
         const statusRes = await getTaskStatus(taskId);
-        if (!isMounted) return;
+        if (!isMounted || cancelledRef.current) return;
 
         setTaskStatus(statusRes.status);
         setCurrentStep(statusRes.current_step || 0);
@@ -60,16 +67,14 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, [taskId, taskStatus]);
 
-  // Fetch final result once task is completed (separate effect avoids
-  // the polling-interval's isMounted cleanup racing with this await)
   useEffect(() => {
-    if (!taskId || taskStatus !== 'completed') return;
+    if (!taskId || taskStatus !== 'completed' || cancelledRef.current) return;
 
     let isMounted = true;
     (async () => {
       try {
         const resData = await getTaskResult(taskId);
-        if (isMounted) {
+        if (isMounted && !cancelledRef.current) {
           setResultData(resData.result);
           setDeliverable(resData.deliverable);
         }
@@ -84,6 +89,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [taskId, taskStatus]);
 
   const handleTaskSubmit = async (prompt: string, files: string[]) => {
+    cancelledRef.current = false;
     setIsLoading(true);
     setResultData(null);
     setDeliverable(undefined);
@@ -91,7 +97,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTaskStatus('running');
 
     try {
-      const res = await submitTask(prompt, files);
+      const res = await submitTask(prompt, files, wantDeliverable);
       setTaskId(res.task_id);
       setModelUsed(res.model_used);
       setRoutingReason(res.routing_reason);
@@ -102,7 +108,20 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Stops the UI from tracking/showing the current task. The backend's
+  // background thread may still finish the Ollama call it already started
+  // (no hard-kill of an in-flight model call in this architecture), but the
+  // UI immediately stops polling and discards whatever result eventually
+  // comes back for this task_id.
+  const cancelTask = () => {
+    cancelledRef.current = true;
+    setIsLoading(false);
+    setTaskStatus('idle');
+    setCurrentStep(0);
+  };
+
   const resetTask = () => {
+    cancelledRef.current = false;
     setTaskId(null);
     setModelUsed('');
     setRoutingReason('');
@@ -126,7 +145,10 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({ children
         resultData,
         deliverable,
         isLoading,
+        wantDeliverable,
+        setWantDeliverable,
         handleTaskSubmit,
+        cancelTask,
         resetTask,
       }}
     >

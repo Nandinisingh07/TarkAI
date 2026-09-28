@@ -80,7 +80,7 @@ export const AgentTraceView: React.FC<Props> = ({ trace, currentStep, status }) 
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(37, 99, 235, 0.15)', color: '#60a5fa', padding: '2px 8px', borderRadius: '4px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(37, 99, 235, 0.15)', color: 'var(--accent-blue)', padding: '2px 8px', borderRadius: '4px' }}>
                       Step {step.step}
                     </span>
                     {step.action && step.action !== 'FINAL_ANSWER' && (
@@ -101,17 +101,17 @@ export const AgentTraceView: React.FC<Props> = ({ trace, currentStep, status }) 
                 </div>
 
                 <div style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: '1.5' }}>
-                  <strong style={{ color: '#60a5fa' }}>AI Reason:</strong> {step.thought}
+                  <strong style={{ color: 'var(--accent-blue)' }}>AI Reason:</strong> {step.thought}
                 </div>
 
                 {isTechOpen && step.action_input && (
-                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', background: '#080d1a', border: '1px solid var(--border-subtle)', padding: '8px 12px', borderRadius: '4px', color: 'var(--text-secondary)' }}>
+                  <div style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', background: 'var(--bg-panel-elevated)', border: '1px solid var(--border-subtle)', padding: '8px 12px', borderRadius: '4px', color: 'var(--text-secondary)' }}>
                     <strong>JSON Input:</strong> {typeof step.action_input === 'object' ? JSON.stringify(step.action_input, null, 2) : String(step.action_input)}
                   </div>
                 )}
 
                 {step.observation && (
-                  <div style={{ fontSize: '12px', color: '#34d399', background: 'rgba(16, 185, 129, 0.08)', padding: '8px 12px', borderRadius: '4px', borderLeft: '3px solid var(--accent-emerald)' }}>
+                  <div style={{ fontSize: '12px', color: 'var(--accent-emerald)', background: 'rgba(16, 185, 129, 0.08)', padding: '8px 12px', borderRadius: '4px', borderLeft: '3px solid var(--accent-emerald)' }}>
                     <strong>Observation:</strong> {step.observation.length > 200 ? step.observation.substring(0, 200) + '...' : step.observation}
                   </div>
                 )}

@@ -96,7 +96,7 @@ export const CitationGraph: React.FC<Props> = ({ trace, content }) => {
   };
 
   const nodeColor = (type: GraphNode['type']) =>
-    type === 'query' ? '#60a5fa' : type === 'source' ? '#34d399' : '#fbbf24';
+    type === 'query' ? 'var(--accent-blue)' : type === 'source' ? 'var(--accent-emerald)' : 'var(--accent-amber)';
 
   const nodeRadius = (type: GraphNode['type']) => (type === 'query' ? 10 : type === 'source' ? 7 : 5);
 
@@ -125,7 +125,7 @@ export const CitationGraph: React.FC<Props> = ({ trace, content }) => {
                 y1={from.y}
                 x2={to.x}
                 y2={to.y}
-                stroke={active ? 'rgba(96, 165, 250, 0.45)' : 'rgba(148, 163, 184, 0.12)'}
+                stroke={active ? 'rgba(11, 61, 107, 0.45)' : 'var(--border-subtle)'}
                 strokeWidth={1.5}
               />
             );
@@ -146,7 +146,7 @@ export const CitationGraph: React.FC<Props> = ({ trace, content }) => {
                   r={nodeRadius(n.type)}
                   fill={nodeColor(n.type)}
                   opacity={active ? 1 : 0.25}
-                  stroke="#0b0f1a"
+                  stroke="var(--bg-panel-elevated)"
                   strokeWidth={1.5}
                 />
                 <text
@@ -155,7 +155,7 @@ export const CitationGraph: React.FC<Props> = ({ trace, content }) => {
                   textAnchor="middle"
                   fontSize={n.type === 'query' ? 12 : n.type === 'source' ? 10 : 9}
                   fontWeight={n.type === 'query' ? 700 : 600}
-                  fill={active ? '#e2e8f0' : 'rgba(226, 232, 240, 0.3)'}
+                  fill={active ? 'var(--text-primary)' : 'var(--text-muted)'}
                   style={{ pointerEvents: 'none' }}
                 >
                   {n.label.length > 26 ? n.label.slice(0, 24) + '…' : n.label}
@@ -168,13 +168,13 @@ export const CitationGraph: React.FC<Props> = ({ trace, content }) => {
 
       <div style={{ display: 'flex', gap: '16px', fontSize: '11px', color: 'var(--text-secondary)', marginTop: '4px', flexWrap: 'wrap' }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#60a5fa', display: 'inline-block' }} /> Task Query
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-blue)', display: 'inline-block' }} /> Task Query
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#34d399', display: 'inline-block' }} /> Source Document
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-emerald)', display: 'inline-block' }} /> Source Document
         </span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#fbbf24', display: 'inline-block' }} /> Cited SOP / Equipment Reference
+          <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-amber)', display: 'inline-block' }} /> Cited SOP / Equipment Reference
         </span>
       </div>
     </div>
