@@ -1,143 +1,315 @@
 # TarkAI
 
-**A Sovereign, Air-Gapped, On-Premise Agentic AI Workbench**
+### Sovereign On-Premise Agentic AI Workbench for Confidential Industrial Work
 
-Built for **PS26117** — Mangalore Refinery and Petrochemicals Limited (MRPL), Smart India Hackathon 2026
+> **Intelligence that stays where your data stays.**
 
----
-
-## Problem Statement
-
-Refineries, PSUs, and defence-linked manufacturing units generate large volumes of sensitive knowledge work — approval notes, engineering calculations, scanned drawings, inspection reports — that cannot be processed by cloud AI tools like Claude or Codex due to confidentiality constraints. PS26117 calls for a **self-hosted, air-gapped AI workbench** that:
-
-- Runs entirely on the organization's own infrastructure, with zero external calls
-- Supports multiple open-weight models and automatically selects the right one per task
-- Allows new models to be added later **without redesigning the system**
-- Acts as a genuine agent — planning, using tools, and iterating on multi-step work
-- Handles multimodal input (scanned PDFs, handwriting, engineering drawings)
-- Produces real deliverables (Word/Excel/PPT, working code), not just chat replies
-- Grounds itself in the organization's own SOPs and documents
-- **Proves** — via logs or a live network monitor — that no external calls are made
+Built for **Smart India Hackathon 2026**, Problem Statement **SIH26117**, by **Mangalore Refinery and Petrochemicals Limited (MRPL)**.
+Team: **818_RubixCode**
 
 ---
 
-## What TarkAI Does
+## Table of Contents
 
-TarkAI is a self-hosted agentic AI workbench designed to meet every requirement above.
-
-- **Secure, Air-Gapped AI** — Runs fully on-premise with zero external calls, keeping sensitive data protected and verifiably inside the organization.
-- **Intelligent Model Routing** — Automatically selects the most suitable local AI model for each task, such as coding or reasoning.
-- **ReAct-Based Task Automation** — Uses Reason → Act → Observation loops to plan, execute, observe, and refine multi-step tasks until completion.
-- **Multimodal & Organization-Grounded** — Processes text, scans, handwriting, and drawings using the organization's own internal knowledge.
-- **From Task to Deliverable** — Generates ready-to-use reports, documents, PPTs, spreadsheets, and working code from user tasks.
-- **Verifiable Security & Deployment** — A live network monitor visibly proves that no data leaves the system, with one-command on-premise deployment.
+1. [The Problem](#the-problem)
+2. [Our Solution](#our-solution)
+3. [Key Features](#key-features)
+4. [Innovation Highlights](#innovation-highlights)
+5. [How It Works](#how-it-works)
+6. [Tech Stack](#tech-stack)
+7. [Application Pages](#application-pages)
+8. [Demo Scenarios](#demo-scenarios)
+9. [Proof of Air-Gap](#proof-of-air-gap)
+10. [Getting Started](#getting-started)
+11. [Hardware and Models](#hardware-and-models)
+12. [Security and Standards](#security-and-standards)
+13. [Research Background](#research-background)
+14. [Limitations](#limitations)
+15. [Roadmap](#roadmap)
+16. [Team](#team)
 
 ---
 
-## Architecture
+## The Problem
 
-User → React frontend → Task Router (rule-based + LLM fallback) → ReAct Agent (Thought → Action → Observation) → local tools (file I/O, code sandbox, spreadsheet, OCR, knowledge-base search) → local Ollama models → deliverable generation (docx/pptx/xlsx/code), all logged and verified by a live network monitor.
+Refineries, PSUs, defence-linked units and government offices do a lot of sensitive knowledge work: approval notes, engineering calculations, code for internal tools, and review of scanned drawings and inspection reports.
 
-Full component diagram: see `/docs/architecture.puml` (PlantUML source in this repo).
+This data is confidential (P&IDs, financials, vendor negotiations, unreleased designs). It cannot go to cloud AI assistants. So people do one of two things:
+
+- Work **manually**, and lose productivity.
+- **Quietly paste** confidential data into public tools.
+
+Both are bad. According to IBM's Cost of a Data Breach 2026 report, the average data breach in India costs **₹25.5 crore**, and unapproved AI use ("shadow AI") adds about **₹1.79 crore** more.
+
+**MRPL needs a third option:** a Claude-like assistant that runs entirely inside the organization.
+
+---
+
+## Our Solution
+
+**TarkAI** is a self-hosted, air-gapped AI workbench. It runs fully on the organization's own machine. Nothing leaves the premises.
+
+It maps directly to the six needs in the problem statement:
+
+| # | Need from SIH26117 | How TarkAI meets it |
+|---|--------------------|---------------------|
+| 1 | Air-gapped, on-premise | Local inference with Ollama, Docker network isolation |
+| 2 | Multiple open-weight models, auto-selected per task | Two-stage Model Router, new model = one config entry |
+| 3 | A real agent (plan, use tools, iterate) | ReAct agent with 8-step cap and loop detection |
+| 4 | Multimodal (scans, images) | Local OCR plus a local vision model |
+| 5 | Real deliverables grounded in company SOPs | Word, Excel, PPT files built from a local knowledge base |
+| 6 | Proof that nothing goes out | Live Air-Gap Monitor showing every connection |
+
+---
+
+## Key Features
+
+### 1. Intelligent Model Router
+Picks the right local model for each task. A coding request and a document question are handled by different models. Routing is two-stage: a fast keyword and file-type check first, and a small model classifies the ambiguous cases. Adding a new model is a single config entry, with no code redesign.
+
+### 2. Agentic Reasoning Engine (ReAct)
+The agent **thinks, acts, observes and retries**. It has an **8-step limit** and **loop detection** so it stops when stuck. Every step is visible in the Agent Reasoning page.
+
+### 3. Knowledge Intelligence (Hybrid RAG)
+Answers come from the organization's own SOPs and manuals, not from model memory. Search combines **keyword search and vector (meaning-based) search**, and every answer shows its **source citation**.
+
+### 4. Multimodal Intelligence
+Scanned documents and images are read with **local OCR and a local vision model**. Low-confidence results are **flagged for human review**.
+
+### 5. Deliverable Factory
+Generates real **Word, Excel and PowerPoint** files, with the **reasoning trace embedded** so calculations can be checked step by step.
+
+### 6. Human Approval Gate (HITL)
+Sensitive or low-confidence outputs wait for an engineer's approval. Nothing is final until a human signs off.
+
+### 7. Air-Gap Monitor
+A live network monitor lists every connection made by the system. This is the evidence for the sovereign claim, not just a statement.
+
+---
+
+## Innovation Highlights
+
+- **Two-stage Model Router** with config-only model onboarding
+- **ReAct agent** with step cap and loop detection
+- **Hybrid search** (keyword plus vector) with citations
+- **Deliverables with reasoning trace** embedded in the file
+- **Citation-backed knowledge graph**
+- **Voice input** and **multilingual support**
+- **Parallel consoles** so multiple users can work at the same time
+- **One-command Docker deployment**
+- **Confidence-based flagging** that sends uncertain results to a human
+
+---
+
+## How It Works
+
+```
+ 01 Confidential Input      Files, telemetry, images or operational queries
+          |
+ 02 Local Model Router      Selects the right on-premise model
+          |
+ 03 ReAct Agent             Reasons, uses tools, executes controlled steps
+          |
+ 04 Knowledge + Tools       Retrieves SOPs, processes data, runs sandboxed code
+          |
+ 05 Human Approval          Engineer reviews sensitive or low-confidence results
+          |
+ 06 Verified Output         Final operational deliverable (docx / xlsx / pptx)
+```
 
 ---
 
 ## Tech Stack
 
-### Currently Implemented (CPU-only, verified from source)
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React (Vite) |
+| Backend | FastAPI (Python) |
+| Local LLM runtime | Ollama |
+| OCR | PyTesseract |
+| Vision model | moondream |
+| Router / general model | phi3:mini |
+| Coding model | ~1.5B-parameter coder model |
+| Network monitoring | psutil |
+| Storage | SQLite |
+| Deployment | Docker |
 
-| Component | Model / Tool |
-|---|---|
-| Reasoning / General | `phi3:mini` |
-| Coding | `qwen2.5-coder:1.5b` |
-| Vision | `qwen3-vl:4b` |
-| Task Router | Stage 1: rule-based keyword/file-type match · Stage 2: `phi3:mini` (LLM tie-breaker) |
-| Embedding | `qwen3-embedding:0.6b` (~1.2GB, CPU-viable) |
-| Retrieval | Hybrid — BM25 + Dense Vector Search + Reciprocal Rank Fusion |
-| Vector Store | ChromaDB (persistent) |
-| OCR | PaddleOCR |
-| Drawing / Symbol Detection | RF-DETR (fine-tuned) |
-| Document Generation | python-docx, python-pptx, openpyxl |
-| Backend | FastAPI + Uvicorn |
-| Frontend | React + Vite |
-| Model Serving | Ollama (local inference) |
-| Deployment | Docker Compose |
-| Security | psutil-based live network monitor |
-
-### Production Target (Mid-Range GPU, per PS26117's own spec)
-
-Only the reasoning, coding, and vision models change — everything else in the stack above is unchanged.
-
-| Component | CPU (Demo) | Mid-Range GPU (Target) |
-|---|---|---|
-| Reasoning / Agent | phi3:mini | Qwen3.6-27B (~17GB VRAM, Q4) |
-| Coding | qwen2.5-coder:1.5b | qwen3-coder:30b (~19GB VRAM, Q4) |
-| Vision | qwen3-vl:4b | Qwen3-VL-8B (~6GB VRAM, Q4) |
-
-**Extendable by design:** switching tiers is a 2–3 line change in `.env` / `models.json`. No code touch — directly satisfying PS26117's requirement that new models be addable without redesigning the system.
+> Demo models are small so they run on CPU. See [Hardware and Models](#hardware-and-models).
 
 ---
 
-## RAG & Grounding Pipeline (code-verified)
+## Application Pages
 
-1. **Ingestion** — `.txt`, `.pdf`, `.docx`, `.xlsx`, and image files parsed from the local knowledge base
-2. **Chunking** — 400-word windows, 80-word overlap
-3. **Embedding** — each chunk encoded via `qwen3-embedding:0.6b`, called through Ollama's `/api/embeddings` endpoint
-4. **Storage** — embeddings upserted into a persistent ChromaDB collection (cosine HNSW index)
-5. **Retrieval** — hybrid search: BM25 (keyword) + dense vector search, merged via Reciprocal Rank Fusion
-6. **Grounded response** — retrieved passages are injected into the agent's prompt history as tool observations, and the model answers only from retrieved context, citing the source
-
-This pipeline was traced end-to-end against the live source (`rag_pipeline.py`, `orchestrator.py`) — every step is implemented, with no stubs or placeholders.
+| Page | Purpose |
+|------|---------|
+| **Home** | Command center with live status: external calls, local models, approvals |
+| **AI Assistant** | Chat interface to ask, analyze and generate locally |
+| **Model Router** | Shows which model was chosen for each task, and why |
+| **Agent Reasoning** | Step-by-step trace of the agent's plan, actions and results |
+| **Tool Registry** | Local tools available to the agent |
+| **Knowledge Search** | Searches approved SOPs and shows the source passage |
+| **Deliverables** | Generated Word, Excel and PPT files |
+| **Air-Gap Monitor** | Live network connections and security events |
+| **Operations** | Current and past tasks |
+| **Approvals** | Human review queue for sensitive outputs |
 
 ---
 
-## Security — Verifiable, Not Claimed
+## Demo Scenarios
 
-Per PS26117: *"show, through logs or a visible network monitor, that no external calls are made at any point — that's the actual proof of the sovereign claim, not just a statement of it."*
+The demo uses **public sample data only**. No proprietary data is used.
 
-TarkAI includes a live network monitor that:
-- Polls active sockets via `psutil.net_connections()` every 3 seconds
-- Classifies every connection as local/private vs. external
-- Logs every check — a warning line is written immediately if any external call is ever detected
-- Enforcement is architectural: no external SDKs exist in the codebase, and Ollama only ever calls `localhost`
+| # | Task | What it shows |
+|---|------|---------------|
+| Q1 | *"What is the maximum allowed vibration on Turbine #1 according to SOP-701? Cite the source."* | Knowledge base answer with a citation, opened in Knowledge Search |
+| Q2 | *"Write a Python function to compute the RMS of a vibration signal, test it on a synthetic 50 Hz sine wave with amplitude 2, and print the result."* | Coding task run in a sandbox. Result is about 1.41. Router picks the coding model |
+| Q3 | Attach a scanned inspection report or gauge panel, list the key findings, and write an approval note as a Word file | End-to-end agentic task: OCR and vision, findings, Word deliverable, human approval |
+| Proof | Open the Air-Gap Monitor | Live connections, with external calls at zero |
+
+Q1 and Q2 together show **automatic model selection across two task types**.
+
+---
+
+## Proof of Air-Gap
+
+The problem statement asks for proof through logs or a visible network monitor. TarkAI provides:
+
+- **Live Air-Gap Monitor** page listing all active connections (built on `psutil`)
+- **Docker network isolation** for the deployed stack
+- **Audit trail** of tasks and approvals
+- **Local-only inference** through Ollama, with no cloud API keys in the project
+
+To verify during a demo: open the Air-Gap Monitor while a task is running and check that every connection is local.
 
 ---
 
 ## Getting Started
 
+> Replace the placeholders below (`<repo-url>`, ports, file names) with your actual values before publishing.
+
+### Prerequisites
+
+- Docker and Docker Compose
+- [Ollama](https://ollama.com) with the required models pulled
+- Tesseract OCR (bundled in the Docker image, or installed locally)
+
+### Option 1: Docker (recommended)
+
 ```bash
 git clone <repo-url>
 cd tarkai
-docker-compose up
+docker compose up --build
 ```
 
-This starts the FastAPI backend, React frontend, and Ollama model server together. See `cpu_tier.env` for the default CPU-only model configuration.
+Then open `http://localhost:5173`.
+
+### Option 2: Run locally
+
+**Backend**
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+
+**Frontend**
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**Models (one-time, needs internet only for the download)**
+
+```bash
+ollama pull phi3:mini
+ollama pull moondream
+# pull your coding model here
+```
+
+After the models are downloaded, the system runs fully offline.
+
+### Adding a new model
+
+Add one entry to the model registry config, with the model name and the task types it should handle. The router picks it up with no code changes.
 
 ---
 
-## Demo Scenario
+## Hardware and Models
 
-1. Live air-gap network monitor running throughout
-2. End-to-end agentic task: OCR a scanned inspection report → cross-check against SOPs via RAG → draft a Word approval note
-3. Router classification shown live for multiple task types
-4. RAG question with citations, plus one deliberate negative test (question outside the knowledge base)
-5. Coding task, executed and verified in a sandbox
-6. Multimodal task → auto-generated PowerPoint briefing
+| Setup | Hardware | Models |
+|-------|----------|--------|
+| **Demo (this repo)** | CPU only, single workstation | Small models (phi3:mini, ~1.5B coder, moondream) |
+| **Production** | Mid-range GPU server | Larger open-weight models, same codebase |
+
+The problem statement allows a smaller open-weight model when GPU hardware is not available at the venue. On CPU, each answer can take **20 to 60 seconds**.
+
+---
+
+## Security and Standards
+
+- All inference, search, OCR and file generation happen **on the local machine**.
+- Human approval is required before outputs are final.
+- Every task and approval is logged.
+- TarkAI follows the **principles** of **IEC 62443** (industrial automation security) and **NIST SP 800-82** (ICS security). **Formal certification is a future step, not a current claim.**
+
+---
+
+## Research Background
+
+The design choices are supported by recent work on on-premise and air-gapped AI:
+
+- *A Cost-Benefit Analysis of On-Premise LLM Deployment* (arXiv 2509.18101): trade-offs between cloud, on-prem and hybrid.
+- *Design and Evaluation of a Secure Air-Gapped LLM-Based Intelligence Analysis Framework* (ResearchSquare **preprint**, not peer-reviewed): offline architecture, RAG, audit logging and human-in-the-loop. In this preprint, RAG reduced hallucination from 38.7% to 12.2%.
+- *Securing Intelligence: The Strategic Necessity of Air-Gapped LLMs* (MIT DSpace): third-party APIs expose prompts and metadata to the provider.
+- Hardware and quantization benchmarks for private LLM servers (arXiv 2512.23029).
+
+Requirements drawn from this work: fully offline operation, local RAG from access-controlled documents, audit logs with human approval, quantized models for limited hardware, and encryption with data kept inside India.
+
+---
+
+## Limitations
+
+Being honest about where we are:
+
+- Demo models are small, so answers are slower and less capable than production-class models.
+- OCR and vision accuracy depends on scan quality. Uncertain results are flagged for a human, not trusted blindly.
+- No research paper we reviewed is specific to Indian refineries or OT/ICS environments. Standards alignment is by principle, not certification.
+- Demo data is public sample material, not real plant data.
 
 ---
 
 ## Roadmap
 
-The following are **planned extensions, not yet implemented** in the current codebase:
-
-- **Knowledge Graph with Citations** — linking related SOPs, drawings, and records into a traceable graph for richer grounding
-- **Voice Integration** — hands-free interaction via voice commands and spoken responses
-- **Multilingual Support** — native support for Hindi and other regional languages alongside English
-- **Multiple Consoles** — parallel chat sessions/tabs so a user can run independent tasks side by side
+- Move from CPU demo models to GPU-class open-weight models
+- Formal alignment review against IEC 62443 and NIST SP 800-82
+- Wider file and drawing support (P&IDs, handwritten notes)
+- Deeper integration with the organization's own document stores
+- Role-based access control and encryption at rest
 
 ---
 
-## Team & Repository
+## Team
 
-- Problem Statement: PS26117 — MRPL, Smart India Hackathon 2026
-- GitHub: `<repo-link>`
+**Team 818_RubixCode**
+
+- Nandini Singh
+- Resham
+- Anjali
+- Dhairya
+- Yaduraj
+- Samarth
+
+---
+
+## Note on Deployed Links
+
+If a cloud-hosted link is provided for this project, it is a **UI preview only**. The full system, including local models and the Air-Gap Monitor, runs **on-premise**.
+
+---
+
+*TarkAI: When the data cannot leave, the intelligence must come to it.*
